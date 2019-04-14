@@ -19,4 +19,10 @@
     <string name="permission_rationale">"Contacts permissions are needed for providing email
         completions."
     </string>
+    <string name="string_score_overview">成绩概览</string>
+    <string name="string_analyse">优劣分析</string>
+    <string name="string_class_overview">班级概览</string>
+    <string name="string_excel">汇总表格</string>
+    <string name="string_logout">登出账号</string>
+    <string name="string_exit">退出程序</string>
 </resources>

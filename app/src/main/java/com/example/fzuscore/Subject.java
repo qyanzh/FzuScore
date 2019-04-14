@@ -2,7 +2,8 @@ package com.example.fzuscore;
 
 public class Subject {
     String name;
-    double score;
+    double myScore;
+    double avrScore;
 
     public String getName() {
         return name;
@@ -12,11 +13,19 @@ public class Subject {
         this.name = name;
     }
 
-    public double getScore() {
-        return score;
+    public double getMyScore() {
+        return myScore;
     }
 
-    public void setScore(double score) {
-        this.score = score;
+    public void setMyScore(double myScore) {
+        this.myScore = myScore;
+    }
+
+    public double getAvrScore() {
+        return avrScore;
+    }
+
+    public void setAvrScore(double avrScore) {
+        this.avrScore = avrScore;
     }
 }
