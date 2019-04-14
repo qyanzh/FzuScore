@@ -15,9 +15,9 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <activity android:name=".ClassActivity"></activity>
-        <activity android:name=".ScoreRankActivity"></activity>
-        <activity android:name=".ScoreListActivity"></activity>
+        <activity android:name=".ClassActivity" android:parentActivityName=".MainActivity"></activity>
+        <activity android:name=".ScoreRankActivity" android:parentActivityName=".ScoreListActivity"></activity>
+        <activity android:name=".ScoreListActivity" android:parentActivityName=".MainActivity"></activity>
         <activity
             android:name=".LoginActivity"
             android:label="@string/title_activity_login">
