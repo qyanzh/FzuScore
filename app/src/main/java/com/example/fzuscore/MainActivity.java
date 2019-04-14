@@ -87,6 +87,8 @@ public class MainActivity extends AppCompatActivity
                 getSupportActionBar().setTitle(R.string.string_class_overview);
                 break;
             case R.id.nav_forms:
+                Intent intent1 = new Intent(MainActivity.this,ScoreListActivity.class);
+                startActivity(intent1);
                 getSupportActionBar().setTitle(R.string.string_excel);
                 break;
             case R.id.nav_logout:

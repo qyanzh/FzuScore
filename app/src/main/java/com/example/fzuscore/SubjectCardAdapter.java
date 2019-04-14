@@ -8,10 +8,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.List;
 
-public class SubjectCradAdapter extends RecyclerView.Adapter<SubjectCradAdapter.ViewHolder> {
+public class SubjectCardAdapter extends RecyclerView.Adapter<SubjectCardAdapter.ViewHolder> {
     private Context mContext;
     private List<SubjectForCard> mSubjectList;
 
@@ -36,12 +37,12 @@ public class SubjectCradAdapter extends RecyclerView.Adapter<SubjectCradAdapter.
         }
     }
 
-    public SubjectCradAdapter(List<SubjectForCard> subjectList){
+    public SubjectCardAdapter(List<SubjectForCard> subjectList){
         mSubjectList = subjectList;
     }
 
     @Override
-    public SubjectCradAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public SubjectCardAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         if(mContext==null){
             mContext = parent.getContext();
         }
@@ -59,6 +60,12 @@ public class SubjectCradAdapter extends RecyclerView.Adapter<SubjectCradAdapter.
         viewHolder.subjectAverage.setText(String.valueOf(subject.getAverage()));
         viewHolder.subjectHighest.setText(String.valueOf(subject.getHighest()));
         viewHolder.subjectLowest.setText(String.valueOf(subject.getLowest()));
+        viewHolder.cardView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(mContext,"Cardview",Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     @Override
