@@ -2,6 +2,12 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 28
+    android {
+        compileOptions {
+            targetCompatibility = "8"
+            sourceCompatibility = "8"
+        }
+    }
     defaultConfig {
         applicationId "com.example.fzuscore"
         minSdkVersion 26
@@ -19,6 +25,8 @@ android {
 }
 
 dependencies {
+    implementation 'com.google.code.gson:gson:2.8.5'
+    implementation("com.squareup.okhttp3:okhttp:3.14.1")
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation 'com.android.support:appcompat-v7:28.0.0'
     implementation 'com.android.support:support-v4:28.0.0'

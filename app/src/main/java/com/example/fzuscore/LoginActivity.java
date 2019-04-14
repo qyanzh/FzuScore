@@ -32,8 +32,23 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
+
+import org.json.JSONObject;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.FormBody;
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 import static android.Manifest.permission.READ_CONTACTS;
 
@@ -76,8 +91,39 @@ public class LoginActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view){
-                Intent intent = new Intent(LoginActivity.this,MainActivity.class);
-                startActivity(intent);
+
+                OkHttpClient client = new OkHttpClient.Builder()
+                        .connectTimeout(10, TimeUnit.SECONDS)
+                        .writeTimeout(10,TimeUnit.SECONDS)
+                        .readTimeout(20, TimeUnit.SECONDS)
+                        .build();
+                LoginAccess loginAccess = new LoginAccess("00000000", "00000000");
+                Gson gson = new Gson();
+                String json = gson.toJson(loginAccess);
+                String url= "http://47.112.10.160:3389/api/login";
+                RequestBody requestBody = FormBody.create(MediaType.parse("application/json; charset=utf-8")
+                        , json);
+                Request request = new Request.Builder()
+                        .url(url)
+                        .post(requestBody)
+                        .build();
+
+                //创建/Call
+                Call call = client.newCall(request);
+                //加入队列 异步操作
+                call.enqueue(new Callback() {
+                    //请求错误回调方法
+                    @Override
+                    public void onFailure(Call call, IOException e) {
+                        System.out.println("连接失败");
+                    }
+                    @Override
+                    public void onResponse(Call call, Response response) throws IOException {
+                        System.out.println(response.body().string());
+                    }
+                });
+//                Intent intent = new Intent(LoginActivity.this,MainActivity.class);
+//                startActivity(intent);
             }
         });
 
