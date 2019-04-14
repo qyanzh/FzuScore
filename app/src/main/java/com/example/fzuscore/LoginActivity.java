@@ -13,7 +13,12 @@ import android.widget.Toast;
 
 import com.google.gson.Gson;
 
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import okhttp3.FormBody;
 import okhttp3.MediaType;
@@ -106,9 +111,14 @@ public class LoginActivity extends AppCompatActivity {
                         runOnUiThread(() -> {
                             Toast.makeText(LoginActivity.this, message, Toast.LENGTH_SHORT).show();
                         });
-                        SharedPreferences.Editor spf =getSharedPreferences("login_status", MODE_PRIVATE).edit();
+                        JSONObject initData = jsonObject.getJSONObject("data");
+                        SharedPreferences.Editor spf =getSharedPreferences("info", MODE_PRIVATE).edit();
                         spf.putBoolean("logined", true);
-                        spf.putString("useraccount",mAccountNumber.getText().toString());
+                        spf.putString("user_account",mAccountNumber.getText().toString());
+                        spf.putString("user_name", initData.getString("student_name"));
+                        spf.putInt("term_amount",initData.getInt("terms_amount"));
+                        JSONArray termJSONArray = initData.getJSONArray("terms");
+                        spf.putString("termJSONArray",termJSONArray.toString());
                         spf.apply();
                         Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                         startActivity(intent);
@@ -127,6 +137,8 @@ public class LoginActivity extends AppCompatActivity {
         }).start();
 
     }
+
+
 
 
     /**

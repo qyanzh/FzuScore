@@ -3,40 +3,34 @@ package com.example.fzuscore;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.view.View;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.TabLayout;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
-import com.google.gson.Gson;
+
+import org.json.JSONArray;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
-import okhttp3.FormBody;
-import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
-import okhttp3.RequestBody;
-import okhttp3.Response;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     long lastBackTime;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -52,14 +46,32 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        SharedPreferences spf =getSharedPreferences("info", MODE_PRIVATE);
+        if(spf.getBoolean("logined",false)) {
+            int amountOfTerms = spf.getInt("term_amount",0);
+            String userName = spf.getString("user_name","用户名");
+            int[] termList;
+            try {
+                JSONArray termsJSON = new JSONArray(spf.getString("termJSONArray",""));
+                termList = JSONUtils.getIntArrayFromJSONArray(termsJSON);
+                TabLayout tabLayout = findViewById(R.id.tabs);
+                for (int i = amountOfTerms - 1; i >= 0; i--) {
+                    tabLayout.addTab(tabLayout.newTab().setText(String.valueOf(termList[i])));
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
         test();
     }
+
 
     private void test() {
         RecyclerView recyclerView = findViewById(R.id.main_recyclerview);
         List<Subject> subjectList = new ArrayList<>();
-        for(int i=0;i<5;i++) {
-            subjectList.add(new Subject("subject"+i,90+i,60+i));
+        for (int i = 0; i < 5; i++) {
+            subjectList.add(new Subject("subject" + i, 90 + i, 60 + i));
         }
         SubjectAdapter subjectAdapter = new SubjectAdapter(subjectList);
         recyclerView.setAdapter(subjectAdapter);
@@ -73,7 +85,7 @@ public class MainActivity extends AppCompatActivity
             drawer.closeDrawer(GravityCompat.START);
         } else {
             long thisTime = Calendar.getInstance().getTimeInMillis();
-            if(thisTime - lastBackTime > 1000) {
+            if (thisTime - lastBackTime > 1000) {
                 lastBackTime = thisTime;
                 Toast.makeText(this, "再按一次退出", Toast.LENGTH_SHORT).show();
             } else {
@@ -103,7 +115,6 @@ public class MainActivity extends AppCompatActivity
                 finish();
                 break;
             case R.id.nav_exit:
-
                 break;
         }
 
@@ -131,9 +142,8 @@ public class MainActivity extends AppCompatActivity
                 .get()
                 .build();
         client.newCall(request).execute();
-        SharedPreferences.Editor spf =getSharedPreferences("login_status", MODE_PRIVATE).edit();
-        spf.putBoolean("logined", false);
-        spf.putString("useraccount","");
-        spf.apply();
+        SharedPreferences.Editor spf = getSharedPreferences("info", MODE_PRIVATE).edit();
+        spf.clear();
+        spf.commit();
     }
 }
