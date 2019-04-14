@@ -21,6 +21,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -32,8 +33,18 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 import static android.Manifest.permission.READ_CONTACTS;
 
@@ -63,6 +74,7 @@ public class LoginActivity extends AppCompatActivity {
     private EditText mPassword;
     private View mProgressView;
     private View mLoginFormView;
+    MediaType mediaType = MediaType.parse("application/json");
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,11 +88,43 @@ public class LoginActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view){
-                Intent intent = new Intent(LoginActivity.this,MainActivity.class);
-                startActivity(intent);
+
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        postJson();
+                    }
+                }).start();
+
+//                Intent intent = new Intent(LoginActivity.this,MainActivity.class);
+//                startActivity(intent);
             }
         });
 
+    }
+
+    private void postJson() {
+        OkHttpClient okHttpClient = new OkHttpClient();
+        JSONObject jsonObject = new JSONObject();
+        try{
+            jsonObject.put("student_id",mAccountNumber.getText());
+            jsonObject.put("student_password",mPassword.getText());
+        }catch (JSONException e){
+            e.printStackTrace();
+        }
+        RequestBody requestBody = RequestBody.create(mediaType,jsonObject.toString());
+        Request request = new Request.Builder()
+                .url("http://47.112.10.160:3389/api/login")
+                .post(requestBody)
+                .build();
+        try{
+            Response response = okHttpClient.newCall(request).execute();
+            String result = response.body().string();
+            Toast.makeText(LoginActivity.this,result,Toast.LENGTH_LONG).show();
+            response.body().close();
+        }catch (IOException e){
+            e.printStackTrace();
+        }
     }
 
     /**
