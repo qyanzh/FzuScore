@@ -13,6 +13,9 @@ import android.view.View;
 import java.util.ArrayList;
 import java.util.List;
 
+import okhttp3.OkHttpClient;
+import okhttp3.RequestBody;
+
 public class ClassActivity extends AppCompatActivity {
 
     private List<SubjectForCard> mSubjectList = new ArrayList<>();
@@ -31,9 +34,6 @@ public class ClassActivity extends AppCompatActivity {
         recyclerView.setAdapter(adapter);
     }
     private void initSubject(){
-        for (int i=0;i<20;i++){
-            SubjectForCard subject = new SubjectForCard("高等数学",i,i,i,i,i);
-            mSubjectList.add(subject);
-        }
+
     }
 }
