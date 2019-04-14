@@ -5,6 +5,12 @@ public class Subject {
     double myScore;
     double avrScore;
 
+    public Subject(String name, double myScore, double avrScore) {
+        this.name = name;
+        this.myScore = myScore;
+        this.avrScore = avrScore;
+    }
+
     public String getName() {
         return name;
     }

@@ -1,8 +1,9 @@
 package com.example.fzuscore;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.os.Looper;
+import android.preference.PreferenceActivity;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -11,12 +12,13 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonArray;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.Iterator;
+import java.util.ArrayList;
+import java.util.List;
 
 import okhttp3.FormBody;
 import okhttp3.MediaType;
@@ -56,37 +58,18 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+        SharedPreferences spf =getSharedPreferences("login_status", MODE_PRIVATE);
+        if(spf.getBoolean("logined",false)){
+            Intent intent = new Intent(this, MainActivity.class);
+            startActivity(intent);
+            finish();
+        }
         // Set up the login form.
         mAccountNumber = findViewById(R.id.et_account_number);
-
         mPassword = findViewById(R.id.et_password);
         FloatingActionButton fab = findViewById(R.id.fab_sign_in);
-        fab.setOnClickListener(v -> {
-            sendRequestWithOkHttp();
-        });
-
+        fab.setOnClickListener(v -> sendRequestWithOkHttp());
     }
-//        fab.setOnClickListener(new View.OnClickListener()) {
-//            @Override
-//            public void onClick (View view){
-//                sendRequestWithOkHttp();
-////                OkHttpClient client = new OkHttpClient.Builder()
-////                        .connectTimeout(10, TimeUnit.SECONDS)
-////                        .writeTimeout(10,TimeUnit.SECONDS)
-////                        .readTimeout(20, TimeUnit.SECONDS)
-////                        .build();
-////                LoginAccess loginAccess = new LoginAccess("00000000", "00000000");
-////                Gson gson = new Gson();
-////                String json = gson.toJson(loginAccess);
-////                String url= "http://47.112.10.160:3389/api/login";
-////                RequestBody requestBody = FormBody.create(MediaType.parse("application/json; charset=utf-8")
-////                        , json);
-////                Request request = new Request.Builder()
-////                        .url(url)
-////                        .post(requestBody)
-////                        .build();
-//            }
-
 
     void sendRequestWithOkHttp() {
         new Thread(new Runnable() {
@@ -111,7 +94,7 @@ public class LoginActivity extends AppCompatActivity {
                     parseJSONWithJSONObject(responseData);
                 } catch (Exception e) {
                     e.printStackTrace();
-                }finally {
+                } finally {
 
                 }
             }
@@ -121,22 +104,30 @@ public class LoginActivity extends AppCompatActivity {
                     JSONObject jsonObject = new JSONObject(jsonData);
                     int isSuccess = jsonObject.getInt("is_success");
                     String message = jsonObject.getString("message");
-                    Log.d("TAG", "message: "+message);
-                    Log.d("TAG", "Success: "+isSuccess);
+                    Log.d("TAG", "message: " + message);
+                    Log.d("TAG", "Success: " + isSuccess);
                     //Looper.prepare();
                     if (isSuccess == 1) {
-                                runOnUiThread(()->{
-                                    Toast.makeText(LoginActivity.this, message, Toast.LENGTH_SHORT).show();
-                                });
-
-                                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                                startActivity(intent);
-
+                        runOnUiThread(() -> {
+                            Toast.makeText(LoginActivity.this, message, Toast.LENGTH_SHORT).show();
+                        });
+                        JSONObject initData = jsonObject.getJSONObject("data");
+                        SharedPreferences.Editor spf =getSharedPreferences("info", MODE_PRIVATE).edit();
+                        spf.putBoolean("logined", true);
+                        spf.putString("user_account",mAccountNumber.getText().toString());
+                        spf.putString("user_name", initData.getString("student_name"));
+                        spf.putInt("term_amount",initData.getInt("terms_amount"));
+                        JSONArray termJSONArray = initData.getJSONArray("terms");
+                        spf.putString("termJSONArray",termJSONArray.toString());
+                        spf.apply();
+                        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                        startActivity(intent);
+                        finish();
                     } else if (isSuccess == 0) {
-                                runOnUiThread(()->{
-                                    Toast.makeText(LoginActivity.this, message, Toast.LENGTH_SHORT).show();
-                                    mPassword.setText("");
-                                });
+                        runOnUiThread(() -> {
+                            Toast.makeText(LoginActivity.this, message, Toast.LENGTH_SHORT).show();
+                            mPassword.setText("");
+                        });
                     }
                     //Looper.loop();
                 } catch (Exception e) {
@@ -146,6 +137,8 @@ public class LoginActivity extends AppCompatActivity {
         }).start();
 
     }
+
+
 
 
     /**

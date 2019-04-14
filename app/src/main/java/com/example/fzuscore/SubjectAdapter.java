@@ -8,18 +8,24 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.List;
 
 public class SubjectAdapter extends RecyclerView.Adapter<SubjectAdapter.ViewHolder> {
     static class ViewHolder extends RecyclerView.ViewHolder {
 
+        View subjectView;
         TextView textViewSubject;
-        TextView textViewScore;
+        TextView textViewMyScore;
+        TextView textViewAvrScore;
+
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
+            subjectView = itemView;
             textViewSubject = itemView.findViewById(R.id.subject_name);
-            textViewScore = itemView.findViewById(R.id.score_mine);
+            textViewMyScore = itemView.findViewById(R.id.score_mine);
+            textViewAvrScore = itemView.findViewById(R.id.score_aver);
         }
     }
 
@@ -34,19 +40,24 @@ public class SubjectAdapter extends RecyclerView.Adapter<SubjectAdapter.ViewHold
             mContext = viewGroup.getContext();
         }
         View view = LayoutInflater.from(mContext).inflate(R.layout.subject_item, viewGroup, false);
-        //TODO:finish it.
-        return null;
+        final ViewHolder holder = new ViewHolder(view);
+        holder.subjectView.setOnClickListener(v->{
+            Toast.makeText(mContext, "something", Toast.LENGTH_SHORT).show();
+        });
+        return holder;
     }
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder viewHolder, int i) {
-
+        Subject subject = mSubjectList.get(i);
+        viewHolder.textViewSubject.setText(subject.getName());
+        viewHolder.textViewMyScore.setText(String.valueOf(subject.getMyScore()));
+        viewHolder.textViewAvrScore.setText(String.valueOf(subject.getAvrScore()));
     }
 
     @Override
     public int getItemCount() {
-        return 0;
+        return mSubjectList.size();
     }
-
 
 }
