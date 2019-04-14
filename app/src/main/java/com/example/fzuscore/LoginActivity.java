@@ -58,7 +58,7 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-        SharedPreferences spf =getSharedPreferences("login_status", MODE_PRIVATE);
+        SharedPreferences spf =getSharedPreferences("info", MODE_PRIVATE);
         if(spf.getBoolean("logined",false)){
             Intent intent = new Intent(this, MainActivity.class);
             startActivity(intent);
@@ -91,11 +91,10 @@ public class LoginActivity extends AppCompatActivity {
                     Response response = client.newCall(request).execute();
                     String responseData = response.body().string();
                     System.out.println(responseData);
+                    System.out.println("**********");
                     parseJSONWithJSONObject(responseData);
                 } catch (Exception e) {
                     e.printStackTrace();
-                } finally {
-
                 }
             }
 
@@ -114,7 +113,7 @@ public class LoginActivity extends AppCompatActivity {
                         JSONObject initData = jsonObject.getJSONObject("data");
                         SharedPreferences.Editor spf =getSharedPreferences("info", MODE_PRIVATE).edit();
                         spf.putBoolean("logined", true);
-                        spf.putString("user_account",mAccountNumber.getText().toString());
+                        spf.putInt("user_account",Integer.valueOf(mAccountNumber.getText().toString()));
                         spf.putString("user_name", initData.getString("student_name"));
                         spf.putInt("term_amount",initData.getInt("terms_amount"));
                         JSONArray termJSONArray = initData.getJSONArray("terms");

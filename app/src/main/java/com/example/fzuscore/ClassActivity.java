@@ -33,6 +33,7 @@ public class ClassActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_class);
 
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         initSubject();
         RecyclerView recyclerView = findViewById(R.id.recycler_view_class);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
