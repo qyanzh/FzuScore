@@ -9,10 +9,12 @@ import java.util.List;
 class TermScoreFragmentAdapter extends FragmentPagerAdapter {
 
     private List<TermScoreFragment> fragmentList;
+    private List<String> titleList;
 
-    public TermScoreFragmentAdapter(FragmentManager fm, List<TermScoreFragment> fragmentList) {
+    public TermScoreFragmentAdapter(FragmentManager fm, List<TermScoreFragment> fragmentList,List<String> titles) {
         super(fm);
         this.fragmentList=fragmentList;
+        this.titleList = titles;
     }
 
     @Override
@@ -23,5 +25,9 @@ class TermScoreFragmentAdapter extends FragmentPagerAdapter {
     @Override
     public int getCount() {
         return fragmentList.size();
+    }
+
+    public CharSequence getPageTitle(int position) {
+        return titleList.get(position);
     }
 }

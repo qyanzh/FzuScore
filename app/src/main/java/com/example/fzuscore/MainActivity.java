@@ -21,9 +21,11 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.sql.SQLOutput;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import okhttp3.FormBody;
 import okhttp3.MediaType;
@@ -35,14 +37,14 @@ import okhttp3.Response;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
-    Object lock = new Object();
     long lastBackTime;
     SharedPreferences spf;
     int thisTerm;
-    int[] termList;
     List<List<Subject>> termSubjectList = new ArrayList<>();
     List<TermScoreFragment> termScoreFragmentList = new ArrayList<>();
+    List<String> termsList = new ArrayList<>();
     TabLayout tabLayout;
+    ViewPager viewPager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,15 +63,17 @@ public class MainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
         tabLayout = findViewById(R.id.tabs);
+        viewPager = findViewById(R.id.viewpager);
         spf = getSharedPreferences("info", MODE_PRIVATE);
         initInfo();
-        requestScores(thisTerm);
-
+        for(int i=0;i<termsList.size();i++)
+            requestScores(Integer.valueOf(termsList.get(i)));
+        initViewPager();
     }
 
+    TermScoreFragmentAdapter adapter;
     private synchronized void initViewPager() {
-        ViewPager viewPager = findViewById(R.id.viewpager);
-        TermScoreFragmentAdapter adapter = new TermScoreFragmentAdapter(getSupportFragmentManager(), termScoreFragmentList);
+        adapter = new TermScoreFragmentAdapter(getSupportFragmentManager(), termScoreFragmentList,termsList);
         viewPager.setAdapter(adapter);
         tabLayout.setupWithViewPager(viewPager);
     }
@@ -85,13 +89,19 @@ public class MainActivity extends AppCompatActivity
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_refresh:
-                for (int i = 0; i < termList.length; i++)
-                    requestScores(termList[i]);
+                termScoreFragmentList.clear();
+                termSubjectList.clear();
+                for (int i = 0; i < termsList.size(); i++)
+                    requestScores(Integer.valueOf(termsList.get(i)));
+                    refreshAdapter();
                 break;
         }
         return true;
     }
 
+    synchronized void  refreshAdapter() {
+        runOnUiThread(()->viewPager.getAdapter().notifyDataSetChanged());
+    }
     private void initInfo() {
 
         if (spf.getBoolean("logined", false)) {
@@ -101,10 +111,11 @@ public class MainActivity extends AppCompatActivity
             UserInfo.setInfo(userId, userName);
             try {
                 JSONArray termsJSON = new JSONArray(spf.getString("termJSONArray", ""));
-                termList = JSONUtils.getIntArrayFromJSONArray(termsJSON);
-                thisTerm = termList[0];
+                int[] termJSONArray = JSONUtils.getIntArrayFromJSONArray(termsJSON);
+                thisTerm = termJSONArray[0];
                 for (int i = 0; i < amountOfTerms; i++) {
-                    tabLayout.addTab(tabLayout.newTab().setText(String.valueOf(termList[i])));
+                    termsList.add(String.valueOf(termJSONArray[i]));
+                    tabLayout.addTab(tabLayout.newTab().setText(String.valueOf(termJSONArray[i])));
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -112,31 +123,37 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    synchronized void requestScores(int term) {
+    void requestScores(int term) {
         new Thread(() -> {
             try {
-                OkHttpClient client = new OkHttpClient();
-                String url = "http://47.112.10.160:3389/api/score";
-                RequestScoreJSON requestScoreJSON = new RequestScoreJSON(UserInfo.getStudent_id(), term);
-                String json = new Gson().toJson(requestScoreJSON);
-                RequestBody requestBody = FormBody.create(MediaType.parse("application/json; charset=utf-8"), json);
-                Request request = new Request.Builder()
-                        .url(url)
-                        .post(requestBody)
-                        .build();
-                Response response = client.newCall(request).execute();
-                String responseData = response.body().string();
-                System.out.println(responseData);
-                System.out.println("-=-=-=--=-=-=-=-=-=-==-=-");
-                parseJSON(responseData);
-                runOnUiThread(this::initViewPager);
+                updateLists(term);
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }).start();
     }
 
-    private void parseJSON(String responseData) {
+    private void updateLists(int term) throws IOException {
+        OkHttpClient client = new OkHttpClient.Builder()
+                .retryOnConnectionFailure(true)
+                .build();
+        String url = "http://47.112.10.160:3389/api/score";
+        RequestScoreJSON requestScoreJSON = new RequestScoreJSON(UserInfo.getStudent_id(), term);
+        String json = new Gson().toJson(requestScoreJSON);
+        RequestBody requestBody = FormBody.create(MediaType.parse("application/json; charset=utf-8"), json);
+        Request request = new Request.Builder()
+                .url(url)
+                .post(requestBody)
+                .header("Connection", "close")
+                .build();
+        Response response = client.newCall(request).execute();
+        String responseData = response.body().string();
+        System.out.println(responseData);
+        System.out.println("-=-=-=--=-="+term+"=-=-==-=-");
+        parseJSON(responseData,term);
+    }
+
+    private synchronized void parseJSON(String responseData,int term) {
         try {
             JSONObject jsonObject = new JSONObject(responseData);
             int subjectsAmount = jsonObject.getInt("subjects_amount");
@@ -145,13 +162,18 @@ public class MainActivity extends AppCompatActivity
             for (int i = 0; i < jsonArray.length(); i++) {
                 JSONObject subjectJSON = jsonArray.getJSONObject(i);
                 double subject_score = subjectJSON.getDouble("subject_score");
-                //int subject_rank = subjectJSON.getInt("subject_rank");
+                int subject_rank = subjectJSON.getInt("subject_rank");
                 String subject_name = subjectJSON.getString("subject_name");
-                //double subject_averscore = subjectJSON.getDouble("subject_averscore");
-                subjectList.add(new Subject(subject_name, subject_score, 0, 1));
+                double subject_averscore = subjectJSON.getDouble("subject_averscore");
+                subjectList.add(new Subject(subject_name, subject_score, subject_averscore, subject_rank));
             }
             termSubjectList.add(subjectList);
-            termScoreFragmentList.add(TermScoreFragment.newInstance(subjectList));
+            termScoreFragmentList.add(TermScoreFragment.newInstance(subjectList,termsList));
+            System.out.println("添加了一个fragment");
+            runOnUiThread(()->{
+                viewPager.getAdapter().notifyDataSetChanged();
+                System.out.println(term+"finish");
+            });
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -211,7 +233,11 @@ public class MainActivity extends AppCompatActivity
 
     private void quitAccount() {
         new Thread(() -> {
-            OkHttpClient client = new OkHttpClient();
+            OkHttpClient client = new OkHttpClient.Builder()
+                    .readTimeout(8, TimeUnit.SECONDS)//设置读取超时时间
+                    .writeTimeout(8,TimeUnit.SECONDS)//设置写的超时时间
+                    .connectTimeout(9,TimeUnit.SECONDS)//设置连接超时时间
+                    .build();
             try {
                 logout(client);
             } catch (Exception e) {
