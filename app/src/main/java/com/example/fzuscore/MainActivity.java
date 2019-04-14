@@ -1,8 +1,12 @@
 package com.example.fzuscore;
 
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -12,8 +16,15 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
 
 import okhttp3.FormBody;
 import okhttp3.MediaType;
@@ -25,13 +36,13 @@ import okhttp3.Response;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
+    long lastBackTime;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setTitle("成绩概览");
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -41,6 +52,18 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+        test();
+    }
+
+    private void test() {
+        RecyclerView recyclerView = findViewById(R.id.main_recyclerview);
+        List<Subject> subjectList = new ArrayList<>();
+        for(int i=0;i<5;i++) {
+            subjectList.add(new Subject("subject"+i,90+i,60+i));
+        }
+        SubjectAdapter subjectAdapter = new SubjectAdapter(subjectList);
+        recyclerView.setAdapter(subjectAdapter);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
     }
 
     @Override
@@ -49,31 +72,15 @@ public class MainActivity extends AppCompatActivity
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
-            super.onBackPressed();
+            long thisTime = Calendar.getInstance().getTimeInMillis();
+            if(thisTime - lastBackTime > 1000) {
+                lastBackTime = thisTime;
+                Toast.makeText(this, "再按一次退出", Toast.LENGTH_SHORT).show();
+            } else {
+                finish();
+            }
         }
     }
-
-//    @Override
-//    public boolean onCreateOptionsMenu(Menu menu) {
-//        // Inflate the menu; this adds items to the action bar if it is present.
-//        getMenuInflater().inflate(R.menu.main, menu);
-//        return true;
-//    }
-//
-//    @Override
-//    public boolean onOptionsItemSelected(MenuItem item) {
-//        // Handle action bar item clicks here. The action bar will
-//        // automatically handle clicks on the Home/Up button, so long
-//        // as you specify a parent activity in AndroidManifest.xml.
-//        int id = item.getItemId();
-//
-//        //noinspection SimplifiableIfStatement
-//        if (id == R.id.action_settings) {
-//            return true;
-//        }
-//
-//        return super.onOptionsItemSelected(item);
-//    }
 
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
@@ -82,49 +89,51 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
         switch (id) {
             case R.id.nav_overview:
-                getSupportActionBar().setTitle(R.string.string_score_overview);
                 break;
             case R.id.nav_analysis:
-                getSupportActionBar().setTitle(R.string.string_analyse);
                 break;
             case R.id.nav_class_overview:
-                getSupportActionBar().setTitle(R.string.string_class_overview);
                 break;
             case R.id.nav_forms:
-                getSupportActionBar().setTitle(R.string.string_excel);
                 break;
             case R.id.nav_logout:
                 quitAccount();
-                getSupportActionBar().setTitle(R.string.string_logout);
+                Intent intent = new Intent(this, LoginActivity.class);
+                startActivity(intent);
+                finish();
                 break;
             case R.id.nav_exit:
-                getSupportActionBar().setTitle(R.string.string_exit);
+
                 break;
         }
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
 
     private void quitAccount() {
-        new Thread(new Runnable() {
-
-            @Override
-            public void run() {
-                OkHttpClient client = new OkHttpClient();
-                try {
-                    Gson gson = new Gson();
-                    String url = "http://47.112.10.160:3389/api/logout";
-                    Request request = new Request.Builder()
-                            .url(url)
-                            .get()
-                            .build();
-                    Response response = client.newCall(request).execute();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+        new Thread(() -> {
+            OkHttpClient client = new OkHttpClient();
+            try {
+                logout(client);
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }).start();
+
+    }
+
+    private void logout(OkHttpClient client) throws IOException {
+        String url = "http://47.112.10.160:3389/api/logout";
+        Request request = new Request.Builder()
+                .url(url)
+                .get()
+                .build();
+        client.newCall(request).execute();
+        SharedPreferences.Editor spf =getSharedPreferences("login_status", MODE_PRIVATE).edit();
+        spf.putBoolean("logined", false);
+        spf.putString("useraccount","");
+        spf.apply();
     }
 }
