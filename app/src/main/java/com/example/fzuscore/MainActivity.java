@@ -2,25 +2,18 @@ package com.example.fzuscore;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
 import android.view.MenuItem;
 
 import com.google.gson.Gson;
 
-import okhttp3.FormBody;
-import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
-import okhttp3.RequestBody;
 import okhttp3.Response;
 
 public class MainActivity extends AppCompatActivity
@@ -89,7 +82,7 @@ public class MainActivity extends AppCompatActivity
                 getSupportActionBar().setTitle(R.string.string_analyse);
                 break;
             case R.id.nav_class_overview:
-                Intent intent = new Intent(MainActivity.this,Class.class);
+                Intent intent = new Intent(MainActivity.this, ClassActivity.class);
                 startActivity(intent);
                 getSupportActionBar().setTitle(R.string.string_class_overview);
                 break;

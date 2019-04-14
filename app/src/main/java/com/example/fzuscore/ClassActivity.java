@@ -13,7 +13,7 @@ import android.view.View;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Class extends AppCompatActivity {
+public class ClassActivity extends AppCompatActivity {
 
     private List<SubjectForCard> mSubjectList = new ArrayList<>();
 

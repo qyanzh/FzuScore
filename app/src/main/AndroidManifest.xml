@@ -16,7 +16,7 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
         <activity
-            android:name=".Class"
+            android:name=".ClassActivity"
             android:label="@string/title_activity_class"
             android:theme="@style/AppTheme.NoActionBar"></activity>
         <activity
@@ -31,7 +31,9 @@
         <activity
             android:name=".MainActivity"
             android:label="@string/app_name"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar">
+
+        </activity>
     </application>
 
 </manifest>
