@@ -1,12 +1,22 @@
 package com.example.fzuscore;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.os.Looper;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import java.util.Iterator;
 
 import okhttp3.FormBody;
 import okhttp3.MediaType;
@@ -54,6 +64,7 @@ public class LoginActivity extends AppCompatActivity {
         fab.setOnClickListener(v -> {
             sendRequestWithOkHttp();
         });
+
     }
 //        fab.setOnClickListener(new View.OnClickListener()) {
 //            @Override
@@ -82,14 +93,14 @@ public class LoginActivity extends AppCompatActivity {
 
             @Override
             public void run() {
+                OkHttpClient client = new OkHttpClient();
                 try {
-                    OkHttpClient client = new OkHttpClient();
-                    LoginAccess loginAccess = new LoginAccess("00000000", "00000000");
+
+                    LoginAccess loginAccess = new LoginAccess(mAccountNumber.getText().toString(), mPassword.getText().toString());
                     Gson gson = new Gson();
                     String json = gson.toJson(loginAccess);
                     String url = "http://47.112.10.160:3389/api/login";
-                    RequestBody requestBody = FormBody.create(MediaType.parse("application/json; charset=utf-8")
-                            , json);
+                    RequestBody requestBody = FormBody.create(MediaType.parse("application/json; charset=utf-8"), json);
                     Request request = new Request.Builder()
                             .url(url)
                             .post(requestBody)
@@ -97,6 +108,37 @@ public class LoginActivity extends AppCompatActivity {
                     Response response = client.newCall(request).execute();
                     String responseData = response.body().string();
                     System.out.println(responseData);
+                    parseJSONWithJSONObject(responseData);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }finally {
+
+                }
+            }
+
+            private void parseJSONWithJSONObject(String jsonData) {
+                try {
+                    JSONObject jsonObject = new JSONObject(jsonData);
+                    int isSuccess = jsonObject.getInt("is_success");
+                    String message = jsonObject.getString("message");
+                    Log.d("TAG", "message: "+message);
+                    Log.d("TAG", "Success: "+isSuccess);
+                    //Looper.prepare();
+                    if (isSuccess == 1) {
+                                runOnUiThread(()->{
+                                    Toast.makeText(LoginActivity.this, message, Toast.LENGTH_SHORT).show();
+                                });
+
+                                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                                startActivity(intent);
+
+                    } else if (isSuccess == 0) {
+                                runOnUiThread(()->{
+                                    Toast.makeText(LoginActivity.this, message, Toast.LENGTH_SHORT).show();
+                                    mPassword.setText("");
+                                });
+                    }
+                    //Looper.loop();
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -104,6 +146,7 @@ public class LoginActivity extends AppCompatActivity {
         }).start();
 
     }
+
 
     /**
      * Callback received when a permissions request has been completed.

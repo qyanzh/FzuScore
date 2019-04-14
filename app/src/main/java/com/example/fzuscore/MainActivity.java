@@ -13,6 +13,15 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.google.gson.Gson;
+
+import okhttp3.FormBody;
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
+
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -85,6 +94,7 @@ public class MainActivity extends AppCompatActivity
                 getSupportActionBar().setTitle(R.string.string_excel);
                 break;
             case R.id.nav_logout:
+                quitAccount();
                 getSupportActionBar().setTitle(R.string.string_logout);
                 break;
             case R.id.nav_exit:
@@ -95,5 +105,26 @@ public class MainActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    private void quitAccount() {
+        new Thread(new Runnable() {
+
+            @Override
+            public void run() {
+                OkHttpClient client = new OkHttpClient();
+                try {
+                    Gson gson = new Gson();
+                    String url = "http://47.112.10.160:3389/api/logout";
+                    Request request = new Request.Builder()
+                            .url(url)
+                            .get()
+                            .build();
+                    Response response = client.newCall(request).execute();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
     }
 }
