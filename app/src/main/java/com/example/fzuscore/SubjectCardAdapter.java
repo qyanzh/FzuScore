@@ -1,6 +1,7 @@
 package com.example.fzuscore;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
@@ -63,7 +64,8 @@ public class SubjectCardAdapter extends RecyclerView.Adapter<SubjectCardAdapter.
         viewHolder.cardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(mContext,"Cardview",Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(mContext,ScoreRankActivity.class);
+                mContext.startActivity(intent);
             }
         });
     }
