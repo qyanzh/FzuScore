@@ -1,5 +1,6 @@
 package com.example.fzuscore;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -88,6 +89,8 @@ public class MainActivity extends AppCompatActivity
                 getSupportActionBar().setTitle(R.string.string_analyse);
                 break;
             case R.id.nav_class_overview:
+                Intent intent = new Intent(MainActivity.this,Class.class);
+                startActivity(intent);
                 getSupportActionBar().setTitle(R.string.string_class_overview);
                 break;
             case R.id.nav_forms:
