@@ -1,5 +1,6 @@
 package com.example.fzuscore;
 
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -40,34 +41,38 @@ import okhttp3.Response;
 
 public class ClassActivity extends AppCompatActivity {
 
-    private List<SubjectForCard> mSubjectList = new ArrayList<>();
-
+    SharedPreferences spf;
     private ArrayList<Integer> termList = new ArrayList<>();
     private SubjectCardAdapter adapter;
     private TextView tvOptions;
     private int termOption;
     private Button btTermChange;
-    ViewPager viewPager;
+    private RecyclerView view;
+    private List<List<SubjectForCard>> termSubjectList = new ArrayList<>();
+    private List<SubjectForCard> currentList = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_class);
 
-        termOption = 201701;
-
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle("班级概览");
-        long requestFrom = Calendar.getInstance().getTimeInMillis();
-        initSubject();
-//        while(mSubjectList.size() < 6 ){
-//            if(Calendar.getInstance().getTimeInMillis() - requestFrom > 1000) {
-//                break;
-//            }
-//        }
-        initView();
-        //initPickerView();
 
+        spf = getSharedPreferences("info",MODE_PRIVATE);
+        String responseData = spf.getString("scoreJSON",null);
+        System.out.println(responseData);
+        System.out.print("**************************");
+        parseJSON(responseData);
+
+        view = findViewById(R.id.recycler_view_class);
+        termOption = 0;
+
+        //initSubject();
+
+        initView();
+
+        initPickerView();
     }
 
     private void initPickerView() {
@@ -78,13 +83,19 @@ public class ClassActivity extends AppCompatActivity {
             @Override
             public void onOptionsSelect(int options1, int options2, int options3, View v) {
                 termOption = termList.get(options1);
-                tvOptions.setText(String.valueOf(termOption));
-                viewPager.getAdapter().notifyDataSetChanged();
+                if(termOption==201802) termOption = 0;
+                else if(termOption==201801) termOption = 1;
+                else if(termOption==201702) termOption = 2;
+                else if(termOption==201701) termOption = 3;
+                tvOptions.setText(String.valueOf(termList.get(options1)));
+                currentList.clear();
+                currentList.addAll(termSubjectList.get(termOption));
+                view.getAdapter().notifyDataSetChanged();
             }
         }).setTitleText("选择学期")
                 .setContentTextSize(20)//设置滚轮文字大小
                 .setDividerColor(Color.LTGRAY)//设置分割线的颜色
-                .setSelectOptions(3)//默认选中项
+                .setSelectOptions(0)//默认选中项
                 .build();
         pvOptions.setPicker(termList);
         pvOptions.show();
@@ -97,17 +108,19 @@ public class ClassActivity extends AppCompatActivity {
     }
 
     private void getOptionitem() {
-        termList.add(201701);
-        termList.add(201702);
-        termList.add(201801);
         termList.add(201802);
+        termList.add(201801);
+        termList.add(201702);
+        termList.add(201701);
     }
 
+
     private void initView() {
-        RecyclerView recyclerView = findViewById(R.id.recycler_view_class);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        adapter = new SubjectCardAdapter(mSubjectList);
-        recyclerView.setAdapter(adapter);
+        view = findViewById(R.id.recycler_view_class);
+        view.setLayoutManager(new LinearLayoutManager(this));
+        currentList.addAll(termSubjectList.get(termOption));
+        adapter = new SubjectCardAdapter(currentList);
+        view.setAdapter(adapter);
     }
 
     private void initSubject(){
@@ -137,17 +150,27 @@ public class ClassActivity extends AppCompatActivity {
 
     private void parseJSON(String responseData) {
         try {
-            JSONObject jsonObject = new JSONObject(responseData);
-            JSONArray jsonArray = jsonObject.getJSONArray("subjects");
+            JSONArray jsonArray = new JSONArray(responseData);
             for (int i = 0; i < jsonArray.length(); i++) {
-                JSONObject subjectJSON = jsonArray.getJSONObject(i);
-                double subject_min = subjectJSON.optDouble("subject_min");
-                double subject_max = subjectJSON.optDouble("subject_max");
-                //int subject_rank = subjectJSON.getInt("subject_rank");
-                String subject_name = subjectJSON.optString("subject_name");
-                double subject_averscore = subjectJSON.optDouble("subject_averscore");
-                double subject_perfect = subjectJSON.optDouble("subject_perfect");
-                double subject_pass = subjectJSON.optDouble("subject_pass");
+                List<SubjectForCard> mSubjectList = new ArrayList<>();
+                JSONObject json = jsonArray.getJSONObject(i);
+                JSONArray subjectJSONArray = json.getJSONArray("subjects");
+                int term = json.getInt("term");
+                for (int j = 0; j < subjectJSONArray.length(); j++) {
+                    JSONObject subjectJSON = subjectJSONArray.getJSONObject(j);
+                    double subject_perfect = subjectJSON.getDouble("subject_perfect");
+                    subject_perfect = subject_perfect * 100;
+                    double subject_pass = subjectJSON.getDouble("subject_pass");
+                    subject_pass = subject_pass * 100;
+                    double subject_min = subjectJSON.getDouble("subject_min");
+                    double subject_max = subjectJSON.getDouble("subject_max");
+                    double subject_score = subjectJSON.getDouble("subject_score");
+                    //int subject_rank = subjectJSON.getInt("subject_rank");
+                    String subject_name = subjectJSON.getString("subject_name");
+                    double subject_averscore = subjectJSON.getDouble("subject_averscore");
+                    mSubjectList.add(new SubjectForCard(subject_name,term,subject_perfect,subject_pass, subject_averscore, subject_max,subject_min));
+                }
+                termSubjectList.add(mSubjectList);
             }
         } catch (Exception e) {
             e.printStackTrace();
