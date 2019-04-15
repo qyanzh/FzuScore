@@ -54,17 +54,17 @@ public class ClassActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_class);
 
-        termOption = 201802;
+        termOption = 201701;
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle("班级概览");
         long requestFrom = Calendar.getInstance().getTimeInMillis();
         initSubject();
-        while(mSubjectList.size() < 6 ){
-            if(Calendar.getInstance().getTimeInMillis() - requestFrom > 1000) {
-                break;
-            }
-        }
+//        while(mSubjectList.size() < 6 ){
+//            if(Calendar.getInstance().getTimeInMillis() - requestFrom > 1000) {
+//                break;
+//            }
+//        }
         initView();
         //initPickerView();
 
@@ -113,28 +113,26 @@ public class ClassActivity extends AppCompatActivity {
     private void initSubject(){
         new Thread(()-> {
                 try{
-                    updateData();
+                    OkHttpClient client = new OkHttpClient.Builder()
+                            .retryOnConnectionFailure(true)
+                            .build();
+                    String url = "http://47.112.10.160:3389/api/score";
+                    JSONObject idJSON = new JSONObject();
+                    idJSON.put("student_id", UserInfo.getStudent_id());
+                    RequestBody requestBody = FormBody.create(MediaType.parse("application/json; charset=utf-8"), idJSON.toString());
+                    Request request = new Request.Builder()
+                            .url(url)
+                            .post(requestBody)
+                            .build();
+                    Response response = client.newCall(request).execute();
+                    String responseData = response.body().string();
+                    System.out.println(responseData);
+                    System.out.print("*************************");
+                    parseJSON(responseData);
                 }catch (Exception e){
                     e.printStackTrace();
                 }
         }).start();
-    }
-
-    private synchronized void updateData() throws IOException {
-        OkHttpClient client = new OkHttpClient();
-        String url = "http://47.112.10.160:3389/api/score";
-        System.out.println(termOption);
-        RequestScoreJSON2 requestScoreJSON = new RequestScoreJSON2(UserInfo.getStudent_id(),String.valueOf(termOption));
-        String json = new Gson().toJson(requestScoreJSON);
-        RequestBody requestBody = FormBody.create(MediaType.parse("application/json; charset=utf-8"),json);
-        Request request = new Request.Builder()
-                .url(url)
-                .post(requestBody)
-                .build();
-        Response response = client.newCall(request).execute();
-        String responseData = response.body().string();
-        System.out.println(responseData);
-        parseJSON(responseData);
     }
 
     private void parseJSON(String responseData) {
@@ -148,7 +146,8 @@ public class ClassActivity extends AppCompatActivity {
                 //int subject_rank = subjectJSON.getInt("subject_rank");
                 String subject_name = subjectJSON.optString("subject_name");
                 double subject_averscore = subjectJSON.optDouble("subject_averscore");
-                mSubjectList.add(new SubjectForCard(subject_name,69.3, 86.4, subject_averscore,subject_max,subject_min));
+                double subject_perfect = subjectJSON.optDouble("subject_perfect");
+                double subject_pass = subjectJSON.optDouble("subject_pass");
             }
         } catch (Exception e) {
             e.printStackTrace();

@@ -2,6 +2,7 @@ package com.example.fzuscore;
 
 public class SubjectForCard {
     String name;
+    int term;
     double excellent;
     double pass;
     double average;
@@ -9,13 +10,22 @@ public class SubjectForCard {
     double highest;
     double lowest;
 
-    public SubjectForCard(String name, double excellent, double pass, double average, double highest, double lowest) {
+    public SubjectForCard(String name, int term,double excellent, double pass, double average, double highest, double lowest) {
         this.name = name;
+        this.term = term;
         this.excellent = excellent;
         this.pass = pass;
         this.average = average;
         this.highest = highest;
         this.lowest = lowest;
+    }
+
+    public int getTerm() {
+        return term;
+    }
+
+    public void setTerm(int term) {
+        this.term = term;
     }
 
     public String getName() {
