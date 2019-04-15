@@ -3,6 +3,7 @@ package com.example.fzuscore;
 public class UserInfo {
     static private int student_id;
     static private String user_name;
+    static private String student_id_str;
 
     public static void setStudent_id(int student_id) {
         UserInfo.student_id = student_id;
@@ -12,9 +13,18 @@ public class UserInfo {
         UserInfo.user_name = user_name;
     }
 
-    public static void setInfo(int student_id, String user_name) {
-        setStudent_id(student_id);
+    public static String getStudent_id_str() {
+        return student_id_str;
+    }
+
+    public static void setStudent_id_str(String student_id_str) {
+        UserInfo.student_id_str = student_id_str;
+    }
+
+    public static void setInfo(String student_id_str, String user_name) {
+        setStudent_id_str(student_id_str);
         setUser_name(user_name);
+        setStudent_id(Integer.valueOf(student_id_str));
     }
 
     public static int getStudent_id() {
