@@ -17,6 +17,7 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Iterator;
 import java.util.List;
 
@@ -39,7 +40,12 @@ public class ClassActivity extends AppCompatActivity {
         setContentView(R.layout.activity_class);
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setTitle("班级概览");
+        long requestFrom = Calendar.getInstance().getTimeInMillis();
         initSubject();
+        while(mSubjectList.size() == 6 || Calendar.getInstance().getTimeInMillis() - requestFrom > 1000){
+
+        }
         initView();
     }
 
@@ -51,7 +57,6 @@ public class ClassActivity extends AppCompatActivity {
     }
 
     private void initSubject(){
-        //mSubjectList.add(new SubjectForCard("高等数学",84.32, 90.43, 87.6,99,54));
         new Thread(()-> {
                 try{
                     updateData();
