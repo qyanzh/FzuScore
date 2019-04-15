@@ -19,26 +19,21 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
-
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import okhttp3.FormBody;
-import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
-import okhttp3.RequestBody;
-import okhttp3.Response;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+        implements NavigationView.OnNavigationItemSelectedListener, RequestUtils.ResponseListener {
 
     long lastBackTime;
     SharedPreferences spf;
@@ -63,73 +58,47 @@ public class MainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
         spf = getSharedPreferences("info", MODE_PRIVATE);
-        initInfo();
         initViewPager();
+        initInfo();
     }
-
-    private void initInfo() {
-        if (spf.getBoolean("logined", false)) {
-            String userName = spf.getString("user_name", "用户名");
-            String userIdStr = spf.getString("user_account","学号");
-            String JSON = spf.getString("scoreJSON","");
-            if(JSON.equals("")) {
-                JSON = getScoreJSON();
-                spf.edit().putString("scoreJSON", JSON).apply();
-            }
-            System.out.println(JSON);
-            parseJSON(JSON);
-            UserInfo.setInfo(userIdStr, userName);
-        }
-    }
-
-    private String getScoreJSON() {
-        long requestFrom = Calendar.getInstance().getTimeInMillis();
-        final StringBuilder responseData = new StringBuilder();
-        new Thread(() -> {
-            try {
-                OkHttpClient client = new OkHttpClient.Builder()
-                        .retryOnConnectionFailure(true)
-                        .build();
-                String url = "http://47.112.10.160:3389/api/score";
-                JSONObject idJSON = new JSONObject();
-                idJSON.put("student_id", UserInfo.getStudent_id());
-                RequestBody requestBody = FormBody.create(MediaType.parse("application/json; charset=utf-8"), idJSON.toString());
-                Request request = new Request.Builder()
-                        .url(url)
-                        .post(requestBody)
-                        .build();
-                Response response = client.newCall(request).execute();
-                responseData.append(response.body().string());
-                System.out.println(responseData.toString());
-                System.out.println(responseData);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }).start();
-        boolean error = false;
-        while ("".contentEquals(responseData)) {
-            if (Calendar.getInstance().getTimeInMillis() - requestFrom > 2000) {
-                Snackbar.make(findViewById(android.R.id.content), "服务器获取数据异常,请重试", Snackbar.LENGTH_SHORT).setAction("重试",v->{
-                    getScoreJSON();
-                }).show();
-                error = true;
-                break;
-            }
-        }
-        if (!error) {
-            Snackbar.make(findViewById(android.R.id.content), "刷新成功", Snackbar.LENGTH_SHORT).show();
-        }
-        return responseData.toString();
-    }
-
-    TermScoreFragmentAdapter adapter;
 
     private void initViewPager() {
-        adapter = new TermScoreFragmentAdapter(getSupportFragmentManager(), termScoreFragmentList);
+        TermScoreFragmentAdapter adapter = new TermScoreFragmentAdapter(getSupportFragmentManager(), termScoreFragmentList);
         TabLayout tabLayout = findViewById(R.id.tabs);
         ViewPager viewPager = findViewById(R.id.viewpager);
         viewPager.setAdapter(adapter);
         tabLayout.setupWithViewPager(viewPager);
+    }
+
+    private void initInfo() {
+        String userName = spf.getString("user_name", "用户名");
+        String userIdStr = spf.getString("user_account", "学号");
+        UserInfo.setInfo(userIdStr, userName);
+        String JSON = spf.getString("scoreJSON", "");
+        if (!isWebConnect()) {
+            Snackbar.make(findViewById(android.R.id.content), "网络不可用", Snackbar.LENGTH_SHORT).show();
+        } else {
+            if (JSON.contentEquals("")) {
+                JSON = getJSONFromServer();
+            };
+            parseJSON(JSON);
+        }
+        ViewPager viewPager = findViewById(R.id.viewpager);
+        viewPager.getAdapter().notifyDataSetChanged();
+    }
+
+    private String getJSONFromServer() {
+        String JSON;
+        JSONObject idJSON = new JSONObject();
+        try {
+            idJSON.put("student_id", UserInfo.getStudent_id());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        JSON = RequestUtils.getJSON("score", idJSON, this);
+        spf.edit().putString("scoreJSON", JSON).apply();
+        System.out.println("getFrom");
+        return JSON;
     }
 
 
@@ -146,27 +115,6 @@ public class MainActivity extends AppCompatActivity
             return networkInfo.isConnected();
         }
         return false;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.action_refresh:
-                if (!isWebConnect()) {
-                    Snackbar.make(findViewById(android.R.id.content), "网络不可用", Snackbar.LENGTH_SHORT).show();
-                } else {
-                    termSubjectList.clear();
-                    termScoreFragmentList.clear();
-                    String JSON = getScoreJSON();
-                    spf.edit().putString("scoreJSON", JSON).apply();
-                    parseJSON(JSON);
-                    Collections.sort(termScoreFragmentList);
-                    ViewPager viewPager = findViewById(R.id.viewpager);
-                    viewPager.getAdapter().notifyDataSetChanged();
-                }
-                break;
-        }
-        return true;
     }
 
     private void parseJSON(String responseData) {
@@ -187,6 +135,7 @@ public class MainActivity extends AppCompatActivity
                 }
                 termSubjectList.add(subjectList);
                 termScoreFragmentList.add(TermScoreFragment.newInstance(subjectList, term));
+                Collections.sort(termScoreFragmentList);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -194,19 +143,23 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        if (drawer.isDrawerOpen(GravityCompat.START)) {
-            drawer.closeDrawer(GravityCompat.START);
-        } else {
-            long thisTime = Calendar.getInstance().getTimeInMillis();
-            if (thisTime - lastBackTime > 1000) {
-                lastBackTime = thisTime;
-                Toast.makeText(this, "再按一次退出", Toast.LENGTH_SHORT).show();
-            } else {
-                finish();
-            }
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_refresh:
+                if (!isWebConnect()) {
+                    Snackbar.make(findViewById(android.R.id.content), "网络不可用", Snackbar.LENGTH_SHORT).show();
+                } else {
+                    termSubjectList.clear();
+                    termScoreFragmentList.clear();
+                    String JSON = getJSONFromServer();
+                    spf.edit().putString("scoreJSON", JSON).apply();
+                    parseJSON(JSON);
+                    ViewPager viewPager = findViewById(R.id.viewpager);
+                    viewPager.getAdapter().notifyDataSetChanged();
+                }
+                break;
         }
+        return true;
     }
 
     @SuppressWarnings("StatementWithEmptyBody")
@@ -244,6 +197,22 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
+    @Override
+    public void onBackPressed() {
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        if (drawer.isDrawerOpen(GravityCompat.START)) {
+            drawer.closeDrawer(GravityCompat.START);
+        } else {
+            long thisTime = Calendar.getInstance().getTimeInMillis();
+            if (thisTime - lastBackTime > 1000) {
+                lastBackTime = thisTime;
+                Toast.makeText(this, "再按一次退出", Toast.LENGTH_SHORT).show();
+            } else {
+                finish();
+            }
+        }
+    }
+
     private void quitAccount() {
         new Thread(() -> {
             OkHttpClient client = new OkHttpClient.Builder()
@@ -252,24 +221,29 @@ public class MainActivity extends AppCompatActivity
                     .connectTimeout(9, TimeUnit.SECONDS)//设置连接超时时间
                     .build();
             try {
-                logout(client);
+                SharedPreferences.Editor editor = getSharedPreferences("info", MODE_PRIVATE).edit();
+                editor.clear();
+                editor.apply();
+                editor.commit();
+                String url = "http://47.112.10.160:3389/api/logout";
+                Request request = new Request.Builder()
+                        .url(url)
+                        .get()
+                        .build();
+                client.newCall(request).execute();
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }).start();
-
     }
 
-    private void logout(OkHttpClient client) throws IOException {
-        SharedPreferences.Editor spf = getSharedPreferences("info", MODE_PRIVATE).edit();
-        spf.clear();
-        spf.apply();
-        spf.commit();
-        String url = "http://47.112.10.160:3389/api/logout";
-        Request request = new Request.Builder()
-                .url(url)
-                .get()
-                .build();
-        client.newCall(request).execute();
+    @Override
+    public void onResponseSuccess() {
+        Snackbar.make(findViewById(android.R.id.content), "刷新成功", Snackbar.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onResponseFailed() {
+        Snackbar.make(findViewById(android.R.id.content), "服务器获取数据异常,请重试", Snackbar.LENGTH_SHORT).setAction("重试", v -> getJSONFromServer()).show();
     }
 }

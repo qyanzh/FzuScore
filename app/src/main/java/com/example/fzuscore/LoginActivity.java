@@ -116,6 +116,7 @@ public class LoginActivity extends AppCompatActivity {
                         spf.putString("user_account",mAccountNumber.getText().toString());
                         spf.putString("user_name", initData.getString("student_name"));
                         spf.apply();
+                        spf.commit();
                         Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                         startActivity(intent);
                         finish();
