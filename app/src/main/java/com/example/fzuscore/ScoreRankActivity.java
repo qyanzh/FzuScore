@@ -1,10 +1,10 @@
 package com.example.fzuscore;
 
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.widget.LinearLayout;
+import android.view.MenuItem;
 
 import com.google.gson.Gson;
 
@@ -42,23 +42,23 @@ public class ScoreRankActivity extends AppCompatActivity {
         recyclerView.setAdapter(adapter);
     }
 
-    private void initRank(){
-            new Thread(()-> {
-                try{
-                    totalData();
-                }catch (Exception e){
-                    e.printStackTrace();
-                }
+    private void initRank() {
+        new Thread(() -> {
+            try {
+                totalData();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
 
-            }).start();
-        }
+        }).start();
+    }
 
     private synchronized void totalData() throws IOException {
         OkHttpClient client = new OkHttpClient();
         String url = "http://47.112.10.160:3389/api/score";
-        RequestScoreJSON requestScoreJSON = new RequestScoreJSON(UserInfo.getStudent_id(),201701);
+        RequestScoreJSON requestScoreJSON = new RequestScoreJSON(UserInfo.getStudent_id(), 201701);
         String json = new Gson().toJson(requestScoreJSON);
-        RequestBody requestBody = FormBody.create(MediaType.parse("application/json; charset=utf-8"),json);
+        RequestBody requestBody = FormBody.create(MediaType.parse("application/json; charset=utf-8"), json);
         Request request = new Request.Builder()
                 .url(url)
                 .post(requestBody)
@@ -84,5 +84,15 @@ public class ScoreRankActivity extends AppCompatActivity {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                onBackPressed();
+                break;
+        }
+        return true;
     }
 }

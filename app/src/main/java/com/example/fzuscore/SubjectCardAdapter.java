@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.text.DecimalFormat;
 import java.util.List;
 
 public class SubjectCardAdapter extends RecyclerView.Adapter<SubjectCardAdapter.ViewHolder> {
@@ -54,13 +55,14 @@ public class SubjectCardAdapter extends RecyclerView.Adapter<SubjectCardAdapter.
 
     @Override
     public void onBindViewHolder(ViewHolder viewHolder, int position) {
+        DecimalFormat df = new DecimalFormat("0.00");
         SubjectForCard subject = mSubjectList.get(position);
         viewHolder.subjectName.setText(subject.getName());
-        viewHolder.subjectExcellent.setText(String.valueOf(subject.getExcellent()));
-        viewHolder.subjectPass.setText(String.valueOf(subject.getPass()));
-        viewHolder.subjectAverage.setText(String.valueOf(subject.getAverage()));
-        viewHolder.subjectHighest.setText(String.valueOf(subject.getHighest()));
-        viewHolder.subjectLowest.setText(String.valueOf(subject.getLowest()));
+        viewHolder.subjectExcellent.setText(df.format(subject.getExcellent()));
+        viewHolder.subjectPass.setText(df.format(subject.getPass()));
+        viewHolder.subjectAverage.setText(df.format(subject.getAverage()));
+        viewHolder.subjectHighest.setText(df.format(subject.getHighest()));
+        viewHolder.subjectLowest.setText(df.format(subject.getLowest()));
         viewHolder.cardView.setOnClickListener(v -> {
             Intent intent = new Intent(mContext,ScoreRankActivity.class);
             mContext.startActivity(intent);

@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
@@ -40,8 +41,10 @@ public class ScoreListActivity extends AppCompatActivity {
         getSupportActionBar().setTitle("成绩汇总");
         long requestFrom = Calendar.getInstance().getTimeInMillis();
         initSubject();
-        while(mSubjectList.size() == 6 || Calendar.getInstance().getTimeInMillis() - requestFrom > 1000){
-
+        while(mSubjectList.size() < 6 ){
+            if( Calendar.getInstance().getTimeInMillis() - requestFrom > 1000) {
+                break;
+            }
         }
         RecyclerView recyclerView = findViewById(R.id.recycler_view_class);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -69,11 +72,13 @@ public class ScoreListActivity extends AppCompatActivity {
         RequestBody requestBody = FormBody.create(MediaType.parse("application/json; charset=utf-8"),json);
         Request request = new Request.Builder()
                 .url(url)
+                .addHeader("Connection", "close")
+                .removeHeader("content-length")
                 .post(requestBody)
                 .build();
         Response response = client.newCall(request).execute();
         String responseData = response.body().string();
-        System.out.println(responseData);
+        System.out.println("what i need\n"+responseData);
         parseJSON(responseData);
     }
 
@@ -83,16 +88,27 @@ public class ScoreListActivity extends AppCompatActivity {
             JSONArray jsonArray = jsonObject.getJSONArray("subjects");
             for (int i = 0; i < jsonArray.length(); i++) {
                 JSONObject subjectJSON = jsonArray.getJSONObject(i);
+                String subject_name = subjectJSON.optString("subject_name");
+                int subject_rank = subjectJSON.getInt("subject_rank");
+                double subject_averscore = subjectJSON.optDouble("subject_averscore");
                 double subject_min = subjectJSON.optDouble("subject_min");
                 double subject_max = subjectJSON.optDouble("subject_max");
-                //int subject_rank = subjectJSON.getInt("subject_rank");
-                String subject_name = subjectJSON.optString("subject_name");
-                double subject_averscore = subjectJSON.optDouble("subject_averscore");
-                mSubjectList.add(new SubjectForCard(subject_name,69.3, 86.4, subject_averscore,subject_max,subject_min));
+                double subject_perfect = subjectJSON.optDouble("subject_perfect")*100;
+                double subject_pass = subjectJSON.optDouble("subject_pass")*100;
+                mSubjectList.add(new SubjectForCard(subject_name,subject_perfect, subject_pass, subject_averscore,subject_max,subject_min));
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                onBackPressed();
+                break;
+        }
+        return true;
+    }
 }
