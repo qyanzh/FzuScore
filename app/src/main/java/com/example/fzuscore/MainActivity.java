@@ -62,16 +62,29 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-
         spf = getSharedPreferences("info", MODE_PRIVATE);
         initInfo();
-        getScoreData();
         initViewPager();
     }
 
+    private void initInfo() {
+        if (spf.getBoolean("logined", false)) {
+            String userName = spf.getString("user_name", "用户名");
+            String userIdStr = spf.getString("user_account","学号");
+            String JSON = spf.getString("scoreJSON","");
+            if(JSON.equals("")) {
+                JSON = getScoreJSON();
+                spf.edit().putString("scoreJSON", JSON).apply();
+            }
+            System.out.println(JSON);
+            parseJSON(JSON);
+            UserInfo.setInfo(userIdStr, userName);
+        }
+    }
 
-    private void getScoreData() {
+    private String getScoreJSON() {
         long requestFrom = Calendar.getInstance().getTimeInMillis();
+        final StringBuilder responseData = new StringBuilder();
         new Thread(() -> {
             try {
                 OkHttpClient client = new OkHttpClient.Builder()
@@ -86,17 +99,19 @@ public class MainActivity extends AppCompatActivity
                         .post(requestBody)
                         .build();
                 Response response = client.newCall(request).execute();
-                String responseData = response.body().string();
+                responseData.append(response.body().string());
+                System.out.println(responseData.toString());
                 System.out.println(responseData);
-                parseJSON(responseData);
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }).start();
         boolean error = false;
-        while (termSubjectList.size()==0) {
+        while ("".contentEquals(responseData)) {
             if (Calendar.getInstance().getTimeInMillis() - requestFrom > 2000) {
-                Snackbar.make(findViewById(android.R.id.content), "服务器获取数据异常,请重试", Snackbar.LENGTH_SHORT).show();
+                Snackbar.make(findViewById(android.R.id.content), "服务器获取数据异常,请重试", Snackbar.LENGTH_SHORT).setAction("重试",v->{
+                    getScoreJSON();
+                }).show();
                 error = true;
                 break;
             }
@@ -104,6 +119,7 @@ public class MainActivity extends AppCompatActivity
         if (!error) {
             Snackbar.make(findViewById(android.R.id.content), "刷新成功", Snackbar.LENGTH_SHORT).show();
         }
+        return responseData.toString();
     }
 
     TermScoreFragmentAdapter adapter;
@@ -141,7 +157,9 @@ public class MainActivity extends AppCompatActivity
                 } else {
                     termSubjectList.clear();
                     termScoreFragmentList.clear();
-                    getScoreData();
+                    String JSON = getScoreJSON();
+                    spf.edit().putString("scoreJSON", JSON).apply();
+                    parseJSON(JSON);
                     Collections.sort(termScoreFragmentList);
                     ViewPager viewPager = findViewById(R.id.viewpager);
                     viewPager.getAdapter().notifyDataSetChanged();
@@ -151,22 +169,14 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
-    private void initInfo() {
-        if (spf.getBoolean("logined", false)) {
-            String userName = spf.getString("user_name", "用户名");
-            String userIdStr = spf.getString("user_account","学号");
-            UserInfo.setInfo(userIdStr, userName);
-        }
-    }
-
     private void parseJSON(String responseData) {
         try {
             JSONArray jsonArray = new JSONArray(responseData);
             for (int i = 0; i < jsonArray.length(); i++) {
                 List<Subject> subjectList = new ArrayList<>();
                 JSONObject json = jsonArray.getJSONObject(i);
-                int term = json.getInt("term");
                 JSONArray subjectJSONArray = json.getJSONArray("subjects");
+                int term = json.getInt("term");
                 for (int j = 0; j < subjectJSONArray.length(); j++) {
                     JSONObject subjectJSON = subjectJSONArray.getJSONObject(j);
                     double subject_score = subjectJSON.getDouble("subject_score");
