@@ -1,9 +1,11 @@
 package com.example.fzuscore;
 
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
+import java.util.Collections;
 import java.util.List;
 
 class TermScoreFragmentAdapter extends FragmentPagerAdapter {
@@ -12,7 +14,7 @@ class TermScoreFragmentAdapter extends FragmentPagerAdapter {
 
     public TermScoreFragmentAdapter(FragmentManager fm, List<TermScoreFragment> fragmentList) {
         super(fm);
-        this.fragmentList=fragmentList;
+        this.fragmentList = fragmentList;
     }
 
     @Override
@@ -23,5 +25,11 @@ class TermScoreFragmentAdapter extends FragmentPagerAdapter {
     @Override
     public int getCount() {
         return fragmentList.size();
+    }
+
+    @Nullable
+    @Override
+    public CharSequence getPageTitle(int position) {
+        return fragmentList.get(position).getTerm()+"";
     }
 }

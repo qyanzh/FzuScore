@@ -61,12 +61,9 @@ public class SubjectCardAdapter extends RecyclerView.Adapter<SubjectCardAdapter.
         viewHolder.subjectAverage.setText(String.valueOf(subject.getAverage()));
         viewHolder.subjectHighest.setText(String.valueOf(subject.getHighest()));
         viewHolder.subjectLowest.setText(String.valueOf(subject.getLowest()));
-        viewHolder.cardView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(mContext,ScoreRankActivity.class);
-                mContext.startActivity(intent);
-            }
+        viewHolder.cardView.setOnClickListener(v -> {
+            Intent intent = new Intent(mContext,ScoreRankActivity.class);
+            mContext.startActivity(intent);
         });
     }
 

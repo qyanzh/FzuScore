@@ -1,9 +1,13 @@
 package com.example.fzuscore;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
@@ -23,7 +27,9 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import okhttp3.FormBody;
 import okhttp3.MediaType;
@@ -35,14 +41,16 @@ import okhttp3.Response;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
-    Object lock = new Object();
     long lastBackTime;
     SharedPreferences spf;
-    int thisTerm;
-    int[] termList;
+
+    boolean close;
+    int[] termsList;
     List<List<Subject>> termSubjectList = new ArrayList<>();
     List<TermScoreFragment> termScoreFragmentList = new ArrayList<>();
     TabLayout tabLayout;
+    ViewPager viewPager;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,15 +69,36 @@ public class MainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
         tabLayout = findViewById(R.id.tabs);
+        viewPager = findViewById(R.id.viewpager);
         spf = getSharedPreferences("info", MODE_PRIVATE);
         initInfo();
-        requestScores(thisTerm);
-
+        getScoreData();
+        initViewPager();
     }
 
-    private synchronized void initViewPager() {
-        ViewPager viewPager = findViewById(R.id.viewpager);
-        TermScoreFragmentAdapter adapter = new TermScoreFragmentAdapter(getSupportFragmentManager(), termScoreFragmentList);
+
+    private void getScoreData() {
+        long requestFrom = Calendar.getInstance().getTimeInMillis();
+        for (int i = 0; i < termsList.length; i++)
+            requestScores(termsList[i]);
+        boolean flag = false;
+        while (termScoreFragmentList.size() != termsList.length) {
+            if (Calendar.getInstance().getTimeInMillis() - requestFrom > 2000) {
+                Snackbar.make(findViewById(android.R.id.content), "服务器获取数据异常,请重试", Snackbar.LENGTH_SHORT).show();
+                flag = true;
+                break;
+            }
+        }
+        if(!flag) {
+            Snackbar.make(findViewById(android.R.id.content), "刷新成功", Snackbar.LENGTH_SHORT).show();
+        }
+    }
+
+    TermScoreFragmentAdapter adapter;
+
+    private void initViewPager() {
+        Collections.sort(termScoreFragmentList);
+        adapter = new TermScoreFragmentAdapter(getSupportFragmentManager(), termScoreFragmentList);
         viewPager.setAdapter(adapter);
         tabLayout.setupWithViewPager(viewPager);
     }
@@ -81,12 +110,28 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
+    public boolean isWebConnect(){
+        ConnectivityManager manager = (ConnectivityManager) this.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = manager.getActiveNetworkInfo();
+        if (networkInfo != null) {
+            return networkInfo.isConnected();
+        }
+        return false;
+    }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_refresh:
-                for (int i = 0; i < termList.length; i++)
-                    requestScores(termList[i]);
+                if(!isWebConnect()) {
+                    Snackbar.make(findViewById(android.R.id.content),"网络不可用",Snackbar.LENGTH_SHORT).show();
+                } else{
+                    termSubjectList.clear();
+                    termScoreFragmentList.clear();
+                    getScoreData();
+                    Collections.sort(termScoreFragmentList);
+                    viewPager.getAdapter().notifyDataSetChanged();
+                }
                 break;
         }
         return true;
@@ -101,42 +146,43 @@ public class MainActivity extends AppCompatActivity
             UserInfo.setInfo(userId, userName);
             try {
                 JSONArray termsJSON = new JSONArray(spf.getString("termJSONArray", ""));
-                termList = JSONUtils.getIntArrayFromJSONArray(termsJSON);
-                thisTerm = termList[0];
-                for (int i = 0; i < amountOfTerms; i++) {
-                    tabLayout.addTab(tabLayout.newTab().setText(String.valueOf(termList[i])));
-                }
+                termsList = JSONUtils.getIntArrayFromJSONArray(termsJSON);
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
     }
 
-    synchronized void requestScores(int term) {
+    void requestScores(int term) {
         new Thread(() -> {
             try {
-                OkHttpClient client = new OkHttpClient();
-                String url = "http://47.112.10.160:3389/api/score";
-                RequestScoreJSON requestScoreJSON = new RequestScoreJSON(UserInfo.getStudent_id(), term);
-                String json = new Gson().toJson(requestScoreJSON);
-                RequestBody requestBody = FormBody.create(MediaType.parse("application/json; charset=utf-8"), json);
-                Request request = new Request.Builder()
-                        .url(url)
-                        .post(requestBody)
-                        .build();
-                Response response = client.newCall(request).execute();
-                String responseData = response.body().string();
-                System.out.println(responseData);
-                System.out.println("-=-=-=--=-=-=-=-=-=-==-=-");
-                parseJSON(responseData);
-                runOnUiThread(this::initViewPager);
+                updateLists(term);
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }).start();
     }
 
-    private void parseJSON(String responseData) {
+    private void updateLists(int term) throws IOException {
+        OkHttpClient client = new OkHttpClient.Builder()
+                .retryOnConnectionFailure(true)
+                .build();
+        String url = "http://47.112.10.160:3389/api/score";
+        RequestScoreJSON requestScoreJSON = new RequestScoreJSON(UserInfo.getStudent_id(), term);
+        String json = new Gson().toJson(requestScoreJSON);
+        RequestBody requestBody = FormBody.create(MediaType.parse("application/json; charset=utf-8"), json);
+        Request request = new Request.Builder()
+                .url(url)
+                .post(requestBody)
+                .build();
+        Response response = client.newCall(request).execute();
+        String responseData = response.body().string();
+        System.out.println(responseData);
+        System.out.println("-=-=-=--=-=" + term + "=-=-==-=-");
+        parseJSON(responseData, term);
+    }
+
+    private void parseJSON(String responseData, int term) {
         try {
             JSONObject jsonObject = new JSONObject(responseData);
             int subjectsAmount = jsonObject.getInt("subjects_amount");
@@ -145,13 +191,16 @@ public class MainActivity extends AppCompatActivity
             for (int i = 0; i < jsonArray.length(); i++) {
                 JSONObject subjectJSON = jsonArray.getJSONObject(i);
                 double subject_score = subjectJSON.getDouble("subject_score");
-                //int subject_rank = subjectJSON.getInt("subject_rank");
+                int subject_rank = subjectJSON.getInt("subject_rank");
                 String subject_name = subjectJSON.getString("subject_name");
-                //double subject_averscore = subjectJSON.getDouble("subject_averscore");
-                subjectList.add(new Subject(subject_name, subject_score, 0, 1));
+                double subject_averscore = subjectJSON.getDouble("subject_averscore");
+                subjectList.add(new Subject(subject_name, subject_score, subject_averscore, subject_rank));
             }
+
             termSubjectList.add(subjectList);
-            termScoreFragmentList.add(TermScoreFragment.newInstance(subjectList));
+            termScoreFragmentList.add(TermScoreFragment.newInstance(subjectList, term));
+            System.out.println("添加了一个fragment" + term);
+
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -211,7 +260,11 @@ public class MainActivity extends AppCompatActivity
 
     private void quitAccount() {
         new Thread(() -> {
-            OkHttpClient client = new OkHttpClient();
+            OkHttpClient client = new OkHttpClient.Builder()
+                    .readTimeout(8, TimeUnit.SECONDS)//设置读取超时时间
+                    .writeTimeout(8, TimeUnit.SECONDS)//设置写的超时时间
+                    .connectTimeout(9, TimeUnit.SECONDS)//设置连接超时时间
+                    .build();
             try {
                 logout(client);
             } catch (Exception e) {
