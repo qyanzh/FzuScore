@@ -1,15 +1,24 @@
 package com.example.fzuscore;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.Spinner;
+import android.widget.TextView;
 
+import com.bigkoo.pickerview.builder.OptionsPickerBuilder;
+import com.bigkoo.pickerview.listener.OnOptionsSelectListener;
+import com.bigkoo.pickerview.view.OptionsPickerView;
 import com.google.gson.Gson;
 
 import org.json.JSONArray;
@@ -32,24 +41,68 @@ public class ClassActivity extends AppCompatActivity {
 
     private List<SubjectForCard> mSubjectList = new ArrayList<>();
 
+    private ArrayList<Integer> termList = new ArrayList<>();
     private SubjectCardAdapter adapter;
+    private TextView tvOptions;
+    private int termOption;
+    private Button btTermChange;
+    ViewPager viewPager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_class);
 
+        termOption = 201802;
+
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle("班级概览");
         long requestFrom = Calendar.getInstance().getTimeInMillis();
         initSubject();
-        while(mSubjectList.size() == 6 || Calendar.getInstance().getTimeInMillis() - requestFrom > 1000){
-
+        while(mSubjectList.size() < 6 ){
+            if(Calendar.getInstance().getTimeInMillis() - requestFrom > 1000) {
+                break;
+            }
         }
         initView();
+        //initPickerView();
+
     }
 
-    private synchronized void initView() {
+    private void initPickerView() {
+        getOptionitem();
+        btTermChange = findViewById(R.id.bt_change_term);
+        tvOptions = findViewById(R.id.tv_term_option);
+        OptionsPickerView pvOptions = new OptionsPickerBuilder(ClassActivity.this, new OnOptionsSelectListener() {
+            @Override
+            public void onOptionsSelect(int options1, int options2, int options3, View v) {
+                termOption = termList.get(options1);
+                tvOptions.setText(String.valueOf(termOption));
+                viewPager.getAdapter().notifyDataSetChanged();
+            }
+        }).setTitleText("选择学期")
+                .setContentTextSize(20)//设置滚轮文字大小
+                .setDividerColor(Color.LTGRAY)//设置分割线的颜色
+                .setSelectOptions(3)//默认选中项
+                .build();
+        pvOptions.setPicker(termList);
+        pvOptions.show();
+        btTermChange.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                pvOptions.show();
+            }
+        });
+    }
+
+    private void getOptionitem() {
+        termList.add(201701);
+        termList.add(201702);
+        termList.add(201801);
+        termList.add(201802);
+    }
+
+    private void initView() {
         RecyclerView recyclerView = findViewById(R.id.recycler_view_class);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         adapter = new SubjectCardAdapter(mSubjectList);
@@ -63,14 +116,14 @@ public class ClassActivity extends AppCompatActivity {
                 }catch (Exception e){
                     e.printStackTrace();
                 }
-
         }).start();
     }
 
     private synchronized void updateData() throws IOException {
         OkHttpClient client = new OkHttpClient();
         String url = "http://47.112.10.160:3389/api/score";
-        RequestScoreJSON requestScoreJSON = new RequestScoreJSON(UserInfo.getStudent_id(),201701);
+        System.out.println(termOption);
+        RequestScoreJSON2 requestScoreJSON = new RequestScoreJSON2(UserInfo.getStudent_id(),String.valueOf(termOption));
         String json = new Gson().toJson(requestScoreJSON);
         RequestBody requestBody = FormBody.create(MediaType.parse("application/json; charset=utf-8"),json);
         Request request = new Request.Builder()
