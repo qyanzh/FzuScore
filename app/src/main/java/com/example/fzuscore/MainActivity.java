@@ -81,15 +81,15 @@ public class MainActivity extends AppCompatActivity
         long requestFrom = Calendar.getInstance().getTimeInMillis();
         for (int i = 0; i < termsList.length; i++)
             requestScores(termsList[i]);
-        boolean flag = false;
+        close = false;
         while (termScoreFragmentList.size() != termsList.length) {
             if (Calendar.getInstance().getTimeInMillis() - requestFrom > 2000) {
                 Snackbar.make(findViewById(android.R.id.content), "服务器获取数据异常,请重试", Snackbar.LENGTH_SHORT).show();
-                flag = true;
+                close = true;
                 break;
             }
         }
-        if(!flag) {
+        if(!close) {
             Snackbar.make(findViewById(android.R.id.content), "刷新成功", Snackbar.LENGTH_SHORT).show();
         }
     }
@@ -179,7 +179,9 @@ public class MainActivity extends AppCompatActivity
         String responseData = response.body().string();
         System.out.println(responseData);
         System.out.println("-=-=-=--=-=" + term + "=-=-==-=-");
-        parseJSON(responseData, term);
+        if(!close) {
+            parseJSON(responseData, term);
+        }
     }
 
     private void parseJSON(String responseData, int term) {
@@ -205,7 +207,6 @@ public class MainActivity extends AppCompatActivity
             e.printStackTrace();
         }
     }
-
 
     @Override
     public void onBackPressed() {
@@ -250,7 +251,7 @@ public class MainActivity extends AppCompatActivity
                 break;
             case R.id.nav_exit:
                 finish();
-                break;
+                return true;
         }
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
