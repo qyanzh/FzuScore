@@ -13,14 +13,14 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_term_option">
+        app:layout_constraintTop_toBottomOf="@+id/bt_change_term">
 
     </android.support.v7.widget.RecyclerView>
 
@@ -46,5 +46,16 @@
         app:layout_constraintBottom_toBottomOf="@+id/tv_term_option"
         app:layout_constraintStart_toEndOf="@+id/tv_term_option"
         app:layout_constraintTop_toTopOf="@+id/tv_term_option" />
+
+    <Button
+        android:id="@+id/bt_total_list"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="32dp"
+        android:background="@color/pickerview_bgColor_default"
+        android:text="总成绩排行榜"
+        app:layout_constraintBottom_toBottomOf="@+id/bt_change_term"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/bt_change_term" />
 
 </android.support.constraint.ConstraintLayout>

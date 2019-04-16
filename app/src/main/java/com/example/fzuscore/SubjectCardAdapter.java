@@ -63,6 +63,7 @@ public class SubjectCardAdapter extends RecyclerView.Adapter<SubjectCardAdapter.
         viewHolder.subjectLowest.setText(df.format(subject.getLowest()));
         viewHolder.cardView.setOnClickListener(v -> {
             Intent intent = new Intent(mContext,ScoreRankActivity.class);
+            intent.putExtra("subject_name",subject.getName());
             mContext.startActivity(intent);
         });
     }

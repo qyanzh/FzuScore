@@ -91,7 +91,6 @@ public class ScoreListActivity extends AppCompatActivity {
                 .setSelectOptions(0)//默认选中项
                 .build();
         pvOptions.setPicker(termList);
-        pvOptions.show();
         btTermChange.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
