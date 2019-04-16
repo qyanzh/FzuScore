@@ -17,7 +17,8 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
         <activity android:name=".ClassActivity" android:parentActivityName=".MainActivity"></activity>
-        <activity android:name=".ScoreRankActivity" ></activity>
+        <activity android:name=".ScoreRankActivity" android:parentActivityName=".MainActivity"></activity>
+        <activity android:name=".AnalyseActivity" android:parentActivityName=".MainActivity" android:theme="@style/AppTheme.NoActionBar"></activity>
         <activity
             android:name=".LoginActivity"
             android:label="@string/app_name">
