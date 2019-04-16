@@ -182,6 +182,8 @@ public class MainActivity extends AppCompatActivity
             case R.id.nav_overview:
                 break;
             case R.id.nav_analysis:
+                intent = new Intent(this, AnalyseActivity.class);
+                startActivity(intent);
                 break;
             case R.id.nav_class_overview:
                 intent = new Intent(this, ClassActivity.class);
@@ -251,6 +253,7 @@ public class MainActivity extends AppCompatActivity
                     Toast.makeText(this, JSON.getString("message"), Toast.LENGTH_SHORT).show();
                     if (JSON.getInt("is_success") == 1) {
                         quitAccount();
+                        dialog.dismiss();
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
