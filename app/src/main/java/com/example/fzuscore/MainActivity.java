@@ -135,7 +135,8 @@ public class MainActivity extends AppCompatActivity
                     int subject_rank = subjectJSON.getInt("subject_rank");
                     String subject_name = subjectJSON.getString("subject_name");
                     double subject_averscore = subjectJSON.getDouble("subject_averscore");
-                    subjectList.add(new Subject(subject_name, subject_score, subject_averscore, subject_rank));
+                    int subject_amount = subjectJSON.getInt("subject_amount");
+                    subjectList.add(new Subject(subject_name, subject_score, subject_averscore, subject_rank,subject_amount));
                 }
                 termSubjectList.add(subjectList);
                 termScoreFragmentList.add(TermScoreFragment.newInstance(subjectList, term));

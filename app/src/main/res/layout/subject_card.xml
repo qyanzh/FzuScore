@@ -1,23 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.widget.CardView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/cv_score_list"
-    app:cardElevation="10dp"
-    app:cardCornerRadius="10dp"
-    android:layout_margin="20sp"
-    android:foreground="?android:attr/selectableItemBackground"
-    android:clickable="true"
     android:layout_width="match_parent"
-    android:layout_height="150dp">
+    android:layout_height="150dp"
+    android:layout_margin="10dp"
+    android:clickable="true"
+    android:foreground="?android:attr/selectableItemBackground"
+    app:cardCornerRadius="0dp"
+    app:cardElevation="0dp">
 
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
         <TextView
-            android:id="@+id/card_subject_name"
+            android:id="@+id/subject_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
@@ -37,10 +35,10 @@
             android:text="优秀率"
             android:textColor="@color/colorPrimary"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/card_subject_name" />
+            app:layout_constraintTop_toBottomOf="@+id/subject_name" />
 
         <TextView
-            android:id="@+id/card_subject_excellent"
+            android:id="@+id/subject_score_mine"
             android:layout_width="wrap_content"
             android:layout_height="0dp"
             android:layout_marginStart="16dp"
@@ -62,7 +60,7 @@
             app:layout_constraintTop_toBottomOf="@+id/textView6" />
 
         <TextView
-            android:id="@+id/card_subject_pass"
+            android:id="@+id/subject_score_aver"
             android:layout_width="wrap_content"
             android:layout_height="0dp"
             android:layout_marginStart="16dp"
@@ -79,20 +77,20 @@
             android:layout_marginEnd="16dp"
             android:text="平均分"
             android:textColor="@color/colorPrimary"
-            app:layout_constraintBottom_toBottomOf="@+id/card_subject_average"
-            app:layout_constraintEnd_toStartOf="@+id/card_subject_average"
-            app:layout_constraintTop_toTopOf="@+id/card_subject_average" />
+            app:layout_constraintBottom_toBottomOf="@+id/subject_rank_percent"
+            app:layout_constraintEnd_toStartOf="@+id/subject_rank_percent"
+            app:layout_constraintTop_toTopOf="@+id/subject_rank_percent" />
 
         <TextView
-            android:id="@+id/card_subject_average"
+            android:id="@+id/subject_rank_percent"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="32dp"
             android:text="86.43"
             android:textColor="#000000"
-            app:layout_constraintBottom_toTopOf="@+id/card_subject_pass"
+            app:layout_constraintBottom_toTopOf="@+id/subject_score_aver"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/card_subject_excellent" />
+            app:layout_constraintTop_toBottomOf="@+id/subject_score_mine" />
 
         <TextView
             android:id="@+id/textView13"
@@ -106,7 +104,7 @@
             app:layout_constraintStart_toStartOf="@+id/textView11" />
 
         <TextView
-            android:id="@+id/card_subject_highest"
+            android:id="@+id/subject_rank"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"

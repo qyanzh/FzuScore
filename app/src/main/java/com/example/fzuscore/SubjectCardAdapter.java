@@ -28,11 +28,11 @@ public class SubjectCardAdapter extends RecyclerView.Adapter<SubjectCardAdapter.
         public ViewHolder(View view){
             super(view);
             cardView = (CardView) view;
-            subjectName = view.findViewById(R.id.card_subject_name);
-            subjectExcellent = view.findViewById(R.id.card_subject_excellent);
-            subjectPass = view.findViewById(R.id.card_subject_pass);
-            subjectAverage = view.findViewById(R.id.card_subject_average);
-            subjectHighest = view.findViewById(R.id.card_subject_highest);
+            subjectName = view.findViewById(R.id.subject_name);
+            subjectExcellent = view.findViewById(R.id.subject_score_mine);
+            subjectPass = view.findViewById(R.id.subject_score_aver);
+            subjectAverage = view.findViewById(R.id.subject_rank_percent);
+            subjectHighest = view.findViewById(R.id.subject_rank);
             subjectLowest = view.findViewById(R.id.card_subject_lowest);
         }
     }
