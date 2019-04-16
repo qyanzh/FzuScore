@@ -102,7 +102,6 @@ public class LoginActivity extends AppCompatActivity {
                     Response response = client.newCall(request).execute();
                     String responseData = response.body().string();
                     System.out.println(responseData);
-                    System.out.println("**********");
                     parseJSONWithJSONObject(responseData);
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -123,7 +122,9 @@ public class LoginActivity extends AppCompatActivity {
                         });
                         JSONObject initData = jsonObject.getJSONObject("data");
                         SharedPreferences.Editor spf =getSharedPreferences("info", MODE_PRIVATE).edit();
+                        int isMonitor = initData.getInt("is_monitor");
                         spf.putBoolean("logined", true);
+                        spf.putBoolean("isMonitor",isMonitor==1);
                         spf.putString("user_account",mAccountNumber.getText().toString());
                         spf.putString("user_name", initData.getString("student_name"));
                         spf.apply();

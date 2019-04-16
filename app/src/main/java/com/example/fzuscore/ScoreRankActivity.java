@@ -68,7 +68,6 @@ public class ScoreRankActivity extends AppCompatActivity {
                 int id = subjectJSON.optInt("student_id");
                 double score = subjectJSON.optDouble("score");
                 int rank = subjectJSON.optInt("rank");
-                System.out.println(name + " " + id + " " + score + " " + rank);
                 studentList.add(new ScoreRankStudent(name, score, id, rank));
             }
         } catch (Exception e) {

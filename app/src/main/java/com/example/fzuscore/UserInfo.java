@@ -4,6 +4,7 @@ public class UserInfo {
     static private int student_id;
     static private String user_name;
     static private String student_id_str;
+    static private boolean isMonitor;
 
     public static void setStudent_id(int student_id) {
         UserInfo.student_id = student_id;
@@ -21,10 +22,19 @@ public class UserInfo {
         UserInfo.student_id_str = student_id_str;
     }
 
-    public static void setInfo(String student_id_str, String user_name) {
+    public static void setInfo(String student_id_str, String user_name,boolean isMonitor) {
         setStudent_id_str(student_id_str);
         setUser_name(user_name);
         setStudent_id(Integer.valueOf(student_id_str));
+        setIsMonitor(isMonitor);
+    }
+
+    public static boolean isIsMonitor() {
+        return isMonitor;
+    }
+
+    public static void setIsMonitor(boolean isMonitor) {
+        UserInfo.isMonitor = isMonitor;
     }
 
     public static int getStudent_id() {

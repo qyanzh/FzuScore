@@ -81,15 +81,19 @@ public class MainActivity extends AppCompatActivity
 
         String userName = spf.getString("user_name", "用户名");
         String userIdStr = spf.getString("user_account", "学号");
-        UserInfo.setInfo(userIdStr, userName);
+        boolean isMonitor = spf.getBoolean("isMonitor", false);
+        UserInfo.setInfo(userIdStr, userName,isMonitor);
         String JSON = spf.getString("scoreJSON", "");
+        if (isMonitor) {
+            NavigationView navigationView = findViewById(R.id.nav_view);
+            navigationView.getMenu().findItem(R.id.nav_monitor).setVisible(true);
+        }
         if (!RequestUtils.isWebConnect(this)) {
             Snackbar.make(findViewById(android.R.id.content), "网络不可用", Snackbar.LENGTH_SHORT).show();
         } else {
             if (JSON.contentEquals("")) {
                 JSON = getJSONFromServer();
             }
-            ;
             parseJSON(JSON);
         }
         ViewPager viewPager = findViewById(R.id.viewpager);
@@ -279,6 +283,19 @@ public class MainActivity extends AppCompatActivity
     }
     boolean isChecked = false;
 
+    private void quitAccount() {
+        try {
+            SharedPreferences.Editor editor = getSharedPreferences("info", MODE_PRIVATE).edit();
+            editor.clear().apply();
+            RequestUtils.getJSONByGet("logout", null);
+            Intent intent = new Intent(this, LoginActivity.class);
+            startActivity(intent);
+            finish();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -292,19 +309,6 @@ public class MainActivity extends AppCompatActivity
             } else {
                 finish();
             }
-        }
-    }
-
-    private void quitAccount() {
-        try {
-            SharedPreferences.Editor editor = getSharedPreferences("info", MODE_PRIVATE).edit();
-            editor.clear().apply();
-            RequestUtils.getJSONByGet("logout", null);
-            Intent intent = new Intent(this, LoginActivity.class);
-            startActivity(intent);
-            finish();
-        } catch (Exception e) {
-            e.printStackTrace();
         }
     }
 

@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import java.text.DecimalFormat;
 import java.util.List;
 
 public class ScoreRankAdapter extends RecyclerView.Adapter<ScoreRankAdapter.ViewHolder> {
@@ -27,9 +28,10 @@ public class ScoreRankAdapter extends RecyclerView.Adapter<ScoreRankAdapter.View
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         ScoreRankStudent student = mStudentList.get(position);
-        holder.score.setText(String.valueOf(student.getScore()));
+        DecimalFormat df = new DecimalFormat("0.00");
+        holder.score.setText(df.format(student.getScore()));
         holder.name.setText(student.getName());
-        holder.number.setText(String.valueOf(student.getNumber()));
+        holder.number.setText("0"+String.valueOf(student.getNumber()));
         holder.rank.setText(String.valueOf(student.getRank()));
     }
 
