@@ -52,5 +52,4 @@ public class TermScoreFragment extends Fragment implements Comparable<TermScoreF
         return o.term - this.term;
     }
 
-
 }
