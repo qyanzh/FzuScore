@@ -7,26 +7,17 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.MenuItem;
 
-import com.google.gson.Gson;
-
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
-import okhttp3.FormBody;
-import okhttp3.MediaType;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.RequestBody;
-import okhttp3.Response;
 
 public class ScoreRankActivity extends AppCompatActivity {
 
     private List<ScoreRankStudent> studentList = new ArrayList<>();
-    private  String subjectName;
+    private String subjectName;
     private int term;
 
     @Override
@@ -36,14 +27,14 @@ public class ScoreRankActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         subjectName = intent.getStringExtra("subject_name");
-        term = intent.getIntExtra("term",0);
+        term = intent.getIntExtra("term", 0);
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        if(term==0){
+        if (term == 0) {
             initSubjectRank();
             getSupportActionBar().setTitle(subjectName);
-        }else{
+        } else {
             initTermRank();
             getSupportActionBar().setTitle("总成绩排行榜");
         }
@@ -56,17 +47,14 @@ public class ScoreRankActivity extends AppCompatActivity {
     }
 
     private void initTermRank() {
-        new Thread(() -> {
-            try {
-                JSONObject jsonObject = new JSONObject();
-                jsonObject.put("term",term);
-                String responseData = RequestUtils.getJSON("rank_list",jsonObject,null);
-                parseTermJSON(responseData);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
-        }).start();
+        try {
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("term", term);
+            String responseData = RequestUtils.getJSONByPost("rank_list", jsonObject, null);
+            parseTermJSON(responseData);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private void parseTermJSON(String responseData) {
@@ -80,8 +68,8 @@ public class ScoreRankActivity extends AppCompatActivity {
                 int id = subjectJSON.optInt("student_id");
                 double score = subjectJSON.optDouble("score");
                 int rank = subjectJSON.optInt("rank");
-                System.out.println(name+" "+id+" "+score+" "+rank);
-                studentList.add(new ScoreRankStudent(name,score,id,rank));
+                System.out.println(name + " " + id + " " + score + " " + rank);
+                studentList.add(new ScoreRankStudent(name, score, id, rank));
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -89,17 +77,15 @@ public class ScoreRankActivity extends AppCompatActivity {
     }
 
     private void initSubjectRank() {
-        new Thread(() -> {
-            try {
-                JSONObject jsonObject = new JSONObject();
-                jsonObject.put("subject_name",subjectName);
-                String responseData = RequestUtils.getJSON("subject",jsonObject,null);
-                parseSubjectJSON(responseData);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("subject_name", subjectName);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        String responseData = RequestUtils.getJSONByPost("subject", jsonObject, null);
+        parseSubjectJSON(responseData);
 
-        }).start();
     }
 
     private void parseSubjectJSON(String responseData) {
@@ -114,8 +100,8 @@ public class ScoreRankActivity extends AppCompatActivity {
                 int id = subjectJSON.optInt("student_id");
                 double score = subjectJSON.optDouble("subject_score");
                 int rank = subjectJSON.optInt("rank");
-                System.out.println(name+" "+id+" "+score+" "+rank);
-                studentList.add(new ScoreRankStudent(name,score,id,rank));
+                System.out.println(name + " " + id + " " + score + " " + rank);
+                studentList.add(new ScoreRankStudent(name, score, id, rank));
             }
         } catch (Exception e) {
             e.printStackTrace();
