@@ -50,12 +50,12 @@ public class AnalyseActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         List<Subject> list = new ArrayList<>();
-        Fragment f1 = TermScoreFragment.newInstance(list, 1000);
-        Fragment f2 = TermScoreFragment.newInstance(list, 2000);
+        Fragment f1 = LineChartFragment.newInstance(201701);
+        Fragment f2 = LineChartFragment.newInstance(201701);
         fragmentList.add(f1);
         fragmentList.add(f2);
-        tabTitleList.add("tab1");
-        tabTitleList.add("tab2");
+        tabTitleList.add("优劣学科分析");
+        tabTitleList.add("排名趋势");
         initViewPager();
     }
 
@@ -88,6 +88,8 @@ public class AnalyseActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case android.R.id.home:
                 onBackPressed();
+                break;
+            case R.id.menu_analyse_change_term:
                 break;
         }
         return true;
