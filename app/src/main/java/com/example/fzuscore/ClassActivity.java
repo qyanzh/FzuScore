@@ -1,5 +1,6 @@
 package com.example.fzuscore;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -7,6 +8,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -46,10 +48,12 @@ public class ClassActivity extends AppCompatActivity {
     private SubjectCardAdapter adapter;
     private TextView tvOptions;
     private int termOption;
+    private int term;
     private Button btTermChange;
     private RecyclerView view;
     private List<List<SubjectForCard>> termSubjectList = new ArrayList<>();
     private List<SubjectForCard> currentList = new ArrayList<>();
+    private Button btTotal;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,12 +71,22 @@ public class ClassActivity extends AppCompatActivity {
 
         view = findViewById(R.id.recycler_view_class);
         termOption = 0;
-
+        term = 201802;
         //initSubject();
 
         initView();
 
         initPickerView();
+
+        btTotal = findViewById(R.id.bt_total_list);
+        btTotal.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(ClassActivity.this,ScoreRankActivity.class);
+                intent.putExtra("term",term);
+                startActivity(intent);
+            }
+        });
     }
 
     private void initPickerView() {
@@ -88,6 +102,7 @@ public class ClassActivity extends AppCompatActivity {
                 else if(termOption==201702) termOption = 2;
                 else if(termOption==201701) termOption = 3;
                 tvOptions.setText(String.valueOf(termList.get(options1)));
+                term = termList.get(options1);
                 currentList.clear();
                 currentList.addAll(termSubjectList.get(termOption));
                 view.getAdapter().notifyDataSetChanged();
@@ -98,7 +113,6 @@ public class ClassActivity extends AppCompatActivity {
                 .setSelectOptions(0)//默认选中项
                 .build();
         pvOptions.setPicker(termList);
-        pvOptions.show();
         btTermChange.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
