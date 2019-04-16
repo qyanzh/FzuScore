@@ -187,10 +187,6 @@ public class MainActivity extends AppCompatActivity
                 intent = new Intent(this, ClassActivity.class);
                 startActivity(intent);
                 break;
-            case R.id.nav_forms:
-                intent = new Intent(this, ScoreListActivity.class);
-                startActivity(intent);
-                break;
             case R.id.nav_changePassword:
                 if (RequestUtils.isWebConnect(this)) {
                     changePassword();
