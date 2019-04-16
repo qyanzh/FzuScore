@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.Menu;
 import android.view.MenuItem;
 
 import org.json.JSONArray;
@@ -108,10 +109,31 @@ public class ScoreRankActivity extends AppCompatActivity {
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.activity_score_rank, menu);
+        return true;
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
                 onBackPressed();
+                break;
+            case R.id.menu_rank_statics:
+                int perfect=0,good=0,pass=0,die=0;
+                for (ScoreRankStudent student : studentList) {
+                    if(student.getScore()>=90) {
+                        perfect++;
+                    } else if (student.getScore() >= 78) {
+                        good++;
+                    } else if (student.getScore() >= 60) {
+                        pass++;
+                    } else {
+                        die++;
+                    }
+                }
+                BottomDialogFragment.newInstance(perfect,good,pass,die,studentList.size()).show(getSupportFragmentManager(),"tag");
                 break;
         }
         return true;
