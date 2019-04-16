@@ -6,9 +6,14 @@ import android.os.Bundle;
 import android.preference.PreferenceActivity;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
+import android.text.InputType;
+import android.text.method.HideReturnsTransformationMethod;
+import android.text.method.PasswordTransformationMethod;
 import android.util.Log;
 import android.view.View;
+import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.Switch;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
@@ -51,8 +56,7 @@ public class LoginActivity extends AppCompatActivity {
     // UI references.
     private EditText mAccountNumber;
     private EditText mPassword;
-    private View mProgressView;
-    private View mLoginFormView;
+    Switch switchDisplayPassword;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,6 +71,14 @@ public class LoginActivity extends AppCompatActivity {
         // Set up the login form.
         mAccountNumber = findViewById(R.id.et_account_number);
         mPassword = findViewById(R.id.et_password);
+        switchDisplayPassword = findViewById(R.id.switch_displayPassword);
+        switchDisplayPassword.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isChecked) {
+                mPassword.setTransformationMethod(HideReturnsTransformationMethod.getInstance());
+            } else {
+                mPassword.setTransformationMethod(PasswordTransformationMethod.getInstance());
+            }
+        });
         FloatingActionButton fab = findViewById(R.id.fab_sign_in);
         fab.setOnClickListener(v -> sendRequestWithOkHttp());
     }
@@ -78,7 +90,6 @@ public class LoginActivity extends AppCompatActivity {
             public void run() {
                 OkHttpClient client = new OkHttpClient();
                 try {
-
                     LoginAccess loginAccess = new LoginAccess(mAccountNumber.getText().toString(), mPassword.getText().toString());
                     Gson gson = new Gson();
                     String json = gson.toJson(loginAccess);

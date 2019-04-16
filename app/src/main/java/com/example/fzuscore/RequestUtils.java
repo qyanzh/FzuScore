@@ -1,5 +1,9 @@
 package com.example.fzuscore;
 
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+
 import org.json.JSONObject;
 
 import java.util.Calendar;
@@ -22,7 +26,12 @@ public class RequestUtils {
     public static final String SCORE = "score";
     public static final String SUBJECT = "subject";
 
-    public static String getJSON(String api, JSONObject requestJSON, ResponseListener listener) {
+
+    public static String getJSONByGet(String api, ResponseListener listener) {
+        return getJSONByPost(api, new JSONObject(), listener);
+    }
+
+    public static String getJSONByPost(String api, JSONObject requestJSON, ResponseListener listener) {
         long requestFrom = Calendar.getInstance().getTimeInMillis();
         final StringBuilder responseData = new StringBuilder();
         new Thread(() -> {
@@ -47,7 +56,6 @@ public class RequestUtils {
             if (Calendar.getInstance().getTimeInMillis() - requestFrom > 2000) {
                 if (listener != null) {
                     listener.onResponseFailed();
-
                 }
                 error = true;
                 break;
@@ -59,5 +67,14 @@ public class RequestUtils {
             }
         }
         return responseData.toString();
+    }
+
+    public static boolean isWebConnect(Context context) {
+        ConnectivityManager manager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = manager.getActiveNetworkInfo();
+        if (networkInfo != null) {
+            return networkInfo.isConnected();
+        }
+        return false;
     }
 }

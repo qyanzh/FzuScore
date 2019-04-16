@@ -1,10 +1,7 @@
 package com.example.fzuscore;
 
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
@@ -13,10 +10,17 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.method.HideReturnsTransformationMethod;
+import android.text.method.PasswordTransformationMethod;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import org.json.JSONArray;
@@ -27,13 +31,9 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
-
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, RequestUtils.ResponseListener {
+        implements NavigationView.OnNavigationItemSelectedListener {
 
     long lastBackTime;
     SharedPreferences spf;
@@ -60,6 +60,12 @@ public class MainActivity extends AppCompatActivity
         spf = getSharedPreferences("info", MODE_PRIVATE);
         initViewPager();
         initInfo();
+
+        View headerView = navigationView.getHeaderView(0);
+        TextView textUsername = headerView.findViewById(R.id.user_name);
+        textUsername.setText(UserInfo.getUser_name());
+        TextView textUserId = headerView.findViewById(R.id.user_account);
+        textUserId.setText(UserInfo.getStudent_id_str());
     }
 
     private void initViewPager() {
@@ -71,16 +77,18 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void initInfo() {
+
         String userName = spf.getString("user_name", "用户名");
         String userIdStr = spf.getString("user_account", "学号");
         UserInfo.setInfo(userIdStr, userName);
         String JSON = spf.getString("scoreJSON", "");
-        if (!isWebConnect()) {
+        if (!RequestUtils.isWebConnect(this)) {
             Snackbar.make(findViewById(android.R.id.content), "网络不可用", Snackbar.LENGTH_SHORT).show();
         } else {
             if (JSON.contentEquals("")) {
                 JSON = getJSONFromServer();
-            };
+            }
+            ;
             parseJSON(JSON);
         }
         ViewPager viewPager = findViewById(R.id.viewpager);
@@ -95,7 +103,17 @@ public class MainActivity extends AppCompatActivity
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        JSON = RequestUtils.getJSON("score", idJSON, this);
+        JSON = RequestUtils.getJSONByPost("score", idJSON, new RequestUtils.ResponseListener() {
+            @Override
+            public void onResponseSuccess() {
+                Snackbar.make(findViewById(android.R.id.content), "刷新成功", Snackbar.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onResponseFailed() {
+                Snackbar.make(findViewById(android.R.id.content), "服务器获取数据异常,请重试", Snackbar.LENGTH_SHORT).setAction("重试", v -> getJSONFromServer()).show();
+            }
+        });
         spf.edit().putString("scoreJSON", JSON).apply();
         System.out.println("getFrom");
         return JSON;
@@ -137,7 +155,7 @@ public class MainActivity extends AppCompatActivity
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_refresh:
-                if (!isWebConnect()) {
+                if (!RequestUtils.isWebConnect(this)) {
                     Snackbar.make(findViewById(android.R.id.content), "网络不可用", Snackbar.LENGTH_SHORT).show();
                 } else {
                     termSubjectList.clear();
@@ -172,21 +190,93 @@ public class MainActivity extends AppCompatActivity
                 intent = new Intent(this, ScoreListActivity.class);
                 startActivity(intent);
                 break;
-            case R.id.nav_logout:
-                quitAccount();
-                intent = new Intent(this, LoginActivity.class);
-                startActivity(intent);
-                finish();
+            case R.id.nav_changePassword:
+                if (RequestUtils.isWebConnect(this)) {
+                    changePassword();
+                } else {
+                    Toast.makeText(this, "网络未连接", Toast.LENGTH_SHORT).show();
+                }
                 break;
-            case R.id.nav_exit:
-                finish();
-                return true;
+            case R.id.nav_logout:
+                if (RequestUtils.isWebConnect(this)) {
+                    quitAccount();
+                    return true;
+                } else {
+                    Toast.makeText(this, "网络未连接", Toast.LENGTH_SHORT).show();
+                }
+                break;
         }
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
+
+    private void changePassword() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+        final View dialogView = LayoutInflater.from(MainActivity.this)
+                .inflate(R.layout.layout_change_password, null);
+        builder.setView(dialogView);
+        EditText originPassword = dialogView.findViewById(R.id.editText_origin_password);
+        EditText newPassword = dialogView.findViewById(R.id.editText_new_password);
+        EditText confirmPassword = dialogView.findViewById(R.id.editText_confirm_password);
+        builder.setTitle("修改密码");
+        builder.setPositiveButton("确定", null);
+        builder.setNegativeButton("取消", null);
+        builder.setNeutralButton("显示/隐藏密码", null);
+        AlertDialog dialog = builder.create();
+        dialog.show();
+        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(v -> {
+            String newPass = newPassword.getText().toString();
+            String cofPass = confirmPassword.getText().toString();
+            if (newPass.equals(cofPass)) {
+                JSONObject requestJSON = new JSONObject();
+                try {
+                    requestJSON.put("student_id", UserInfo.getStudent_id());
+                    requestJSON.put("password_old", originPassword.getText().toString());
+                    requestJSON.put("password_new", newPass);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                StringBuilder responseJSON = new StringBuilder();
+                responseJSON.append(RequestUtils.getJSONByPost("change_password", requestJSON, new RequestUtils.ResponseListener() {
+                    @Override
+                    public void onResponseSuccess() {
+                    }
+
+                    @Override
+                    public void onResponseFailed() {
+                        Toast.makeText(MainActivity.this, "服务器异常.请重试", Toast.LENGTH_SHORT).show();
+                    }
+                }));
+                try {
+                    JSONObject JSON = new JSONObject(responseJSON.toString());
+                    Toast.makeText(this, JSON.getString("message"), Toast.LENGTH_SHORT).show();
+                    if (JSON.getInt("is_success") == 1) {
+                        quitAccount();
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            } else {
+                System.out.println("不一致");
+                Toast.makeText(this, "两次新密码输入不一致,请检查", Toast.LENGTH_SHORT).show();
+            }
+        });
+        dialog.getButton(AlertDialog.BUTTON_NEUTRAL).setOnClickListener(view -> {
+            if (!isChecked) {
+                originPassword.setTransformationMethod(HideReturnsTransformationMethod.getInstance());
+                newPassword.setTransformationMethod(HideReturnsTransformationMethod.getInstance());
+                confirmPassword.setTransformationMethod(HideReturnsTransformationMethod.getInstance());
+            } else {
+                originPassword.setTransformationMethod(PasswordTransformationMethod.getInstance());
+                newPassword.setTransformationMethod(PasswordTransformationMethod.getInstance());
+                confirmPassword.setTransformationMethod(PasswordTransformationMethod.getInstance());
+            }
+            isChecked = !isChecked;
+        });
+    }
+    boolean isChecked = false;
 
     @Override
     public void onBackPressed() {
@@ -205,45 +295,17 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void quitAccount() {
-        new Thread(() -> {
-            OkHttpClient client = new OkHttpClient.Builder()
-                    .readTimeout(8, TimeUnit.SECONDS)//设置读取超时时间
-                    .writeTimeout(8, TimeUnit.SECONDS)//设置写的超时时间
-                    .connectTimeout(9, TimeUnit.SECONDS)//设置连接超时时间
-                    .build();
-            try {
-                SharedPreferences.Editor editor = getSharedPreferences("info", MODE_PRIVATE).edit();
-                editor.clear();
-                editor.apply();
-                editor.commit();
-                String url = "http://47.112.10.160:3389/api/logout";
-                Request request = new Request.Builder()
-                        .url(url)
-                        .get()
-                        .build();
-                client.newCall(request).execute();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }).start();
-    }
-
-    @Override
-    public void onResponseSuccess() {
-        Snackbar.make(findViewById(android.R.id.content), "刷新成功", Snackbar.LENGTH_SHORT).show();
-    }
-
-    @Override
-    public void onResponseFailed() {
-        Snackbar.make(findViewById(android.R.id.content), "服务器获取数据异常,请重试", Snackbar.LENGTH_SHORT).setAction("重试", v -> getJSONFromServer()).show();
-    }
-
-    public boolean isWebConnect() {
-        ConnectivityManager manager = (ConnectivityManager) this.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo networkInfo = manager.getActiveNetworkInfo();
-        if (networkInfo != null) {
-            return networkInfo.isConnected();
+        try {
+            SharedPreferences.Editor editor = getSharedPreferences("info", MODE_PRIVATE).edit();
+            editor.clear().apply();
+            RequestUtils.getJSONByGet("logout", null);
+            Intent intent = new Intent(this, LoginActivity.class);
+            startActivity(intent);
+            finish();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-        return false;
     }
+
+
 }

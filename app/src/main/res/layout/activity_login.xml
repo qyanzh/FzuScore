@@ -18,12 +18,12 @@
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/fab_margin"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="60dp"
+        android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.495"
+        app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/et_password"
+        app:layout_constraintTop_toBottomOf="@+id/switch_displayPassword"
         app:srcCompat="@drawable/ic_forward_white_24dp" />
 
     <ImageView
@@ -57,8 +57,9 @@
         android:id="@+id/et_password"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:gravity="center"
         android:layout_marginTop="30dp"
-        android:inputType="numberDecimal"
+        android:inputType="textPassword"
         android:maxLines="1"
         android:text=""
         android:textSize="25sp"
@@ -90,15 +91,13 @@
         app:layout_constraintStart_toStartOf="@+id/textView2"
         app:layout_constraintTop_toTopOf="@+id/et_password" />
 
-    <TextView
-        android:id="@+id/textView5"
+    <Switch
+        android:id="@+id/switch_displayPassword"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:text="忘记密码"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@+id/fab_sign_in"
-        app:layout_constraintStart_toStartOf="@+id/fab_sign_in" />
+        android:layout_marginTop="8dp"
+        android:text="显示密码"
+        app:layout_constraintEnd_toEndOf="@+id/et_password"
+        app:layout_constraintTop_toBottomOf="@+id/et_password" />
 
 </android.support.constraint.ConstraintLayout>

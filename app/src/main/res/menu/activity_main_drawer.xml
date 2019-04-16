@@ -31,13 +31,14 @@
     <item android:title="退出">
         <menu>
             <item
+                android:id="@+id/nav_changePassword"
+                android:icon="@drawable/ic_menu_manage"
+                android:title="修改密码" />
+
+            <item
                 android:id="@+id/nav_logout"
                 android:icon="@drawable/ic_menu_slideshow"
                 android:title="@string/string_logout" />
-            <item
-                android:id="@+id/nav_exit"
-                android:icon="@drawable/ic_menu_manage"
-                android:title="@string/string_exit" />
         </menu>
     </item>
 
