@@ -18,6 +18,7 @@ import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter;
+import com.github.mikephil.charting.formatter.ValueFormatter;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -71,7 +72,7 @@ public class LineChartFragment extends Fragment{
 
         for(int i=0;i<4;i++){
             entries.add(new Entry(i,rankList.get(i)));
-    }
+        }
 
         LineDataSet dataSet = new LineDataSet(entries,"成绩");
         dataSet.setColor(Color.parseColor("#7d7d7d"));
@@ -87,6 +88,7 @@ public class LineChartFragment extends Fragment{
 
         YAxis leftAxis = chart.getAxisLeft();
         leftAxis.setTextSize(15f);
+        leftAxis.setInverted(true);
 
         XAxis xAxis = chart.getXAxis();
         xAxis.setTextSize(12f);
@@ -95,7 +97,7 @@ public class LineChartFragment extends Fragment{
         xAxis.setDrawAxisLine(true);
         xAxis.setDrawGridLines(false);
         xAxis.setLabelCount(4);
-        xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
+        xAxis.setPosition(XAxis.XAxisPosition.TOP);
         xAxis.setValueFormatter(new IndexAxisValueFormatter(termList));
 
         Description description = new Description();
