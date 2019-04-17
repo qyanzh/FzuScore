@@ -8,12 +8,16 @@ public class Subject implements Parcelable {
     double myScore;
     double avrScore;
     int rank;
+    int amount;
+    double rankPercent;
 
     protected Subject(Parcel in) {
         name = in.readString();
         myScore = in.readDouble();
         avrScore = in.readDouble();
         rank = in.readInt();
+        amount = in.readInt();
+        rankPercent = in.readDouble();
     }
 
     public static final Creator<Subject> CREATOR = new Creator<Subject>() {
@@ -39,13 +43,17 @@ public class Subject implements Parcelable {
         dest.writeDouble(myScore);
         dest.writeDouble(avrScore);
         dest.writeInt(rank);
+        dest.writeInt(amount);
+        dest.writeDouble(rankPercent);
     }
 
-    public Subject(String name, double myScore, double avrScore,int rank) {
+    public Subject(String name, double myScore, double avrScore,int rank,int amount) {
         this.name = name;
         this.myScore = myScore;
         this.avrScore = avrScore;
         this.rank = rank;
+        this.amount = amount;
+        this.rankPercent = (double)rank/amount*100;
     }
 
     public String getName() {
@@ -72,5 +80,27 @@ public class Subject implements Parcelable {
         this.avrScore = avrScore;
     }
 
+    public int getRank() {
+        return rank;
+    }
 
+    public void setRank(int rank) {
+        this.rank = rank;
+    }
+
+    public int getAmount() {
+        return amount;
+    }
+
+    public void setAmount(int amount) {
+        this.amount = amount;
+    }
+
+    public double getRankPercent() {
+        return rankPercent;
+    }
+
+    public void setRankPercent(double rankPercent) {
+        this.rankPercent = rankPercent;
+    }
 }

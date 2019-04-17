@@ -29,7 +29,6 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity
@@ -81,15 +80,19 @@ public class MainActivity extends AppCompatActivity
 
         String userName = spf.getString("user_name", "用户名");
         String userIdStr = spf.getString("user_account", "学号");
-        UserInfo.setInfo(userIdStr, userName);
+        boolean isMonitor = spf.getBoolean("isMonitor", false);
+        UserInfo.setInfo(userIdStr, userName, isMonitor);
         String JSON = spf.getString("scoreJSON", "");
+        if (isMonitor) {
+            NavigationView navigationView = findViewById(R.id.nav_view);
+            navigationView.getMenu().findItem(R.id.nav_monitor).setVisible(true);
+        }
         if (!RequestUtils.isWebConnect(this)) {
             Snackbar.make(findViewById(android.R.id.content), "网络不可用", Snackbar.LENGTH_SHORT).show();
         } else {
             if (JSON.contentEquals("")) {
                 JSON = getJSONFromServer();
             }
-            ;
             parseJSON(JSON);
         }
         ViewPager viewPager = findViewById(R.id.viewpager);
@@ -135,11 +138,11 @@ public class MainActivity extends AppCompatActivity
                     int subject_rank = subjectJSON.getInt("subject_rank");
                     String subject_name = subjectJSON.getString("subject_name");
                     double subject_averscore = subjectJSON.getDouble("subject_averscore");
-                    subjectList.add(new Subject(subject_name, subject_score, subject_averscore, subject_rank));
+                    int subject_amount = subjectJSON.getInt("subject_amount");
+                    subjectList.add(new Subject(subject_name, subject_score, subject_averscore, subject_rank, subject_amount));
                 }
                 termSubjectList.add(subjectList);
                 termScoreFragmentList.add(TermScoreFragment.newInstance(subjectList, term));
-                Collections.sort(termScoreFragmentList);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -186,7 +189,7 @@ public class MainActivity extends AppCompatActivity
                 startActivity(intent);
                 break;
             case R.id.nav_class_overview:
-                intent = new Intent(this, ClassActivity.class);
+                intent = new Intent(this, ClassOverviewActivity.class);
                 startActivity(intent);
                 break;
             case R.id.nav_changePassword:
@@ -276,7 +279,21 @@ public class MainActivity extends AppCompatActivity
             isChecked = !isChecked;
         });
     }
+
     boolean isChecked = false;
+
+    private void quitAccount() {
+        try {
+            SharedPreferences.Editor editor = getSharedPreferences("info", MODE_PRIVATE).edit();
+            editor.clear().apply();
+            RequestUtils.getJSONByGet("logout", null);
+            Intent intent = new Intent(this, LoginActivity.class);
+            startActivity(intent);
+            finish();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
     @Override
     public void onBackPressed() {
@@ -291,19 +308,6 @@ public class MainActivity extends AppCompatActivity
             } else {
                 finish();
             }
-        }
-    }
-
-    private void quitAccount() {
-        try {
-            SharedPreferences.Editor editor = getSharedPreferences("info", MODE_PRIVATE).edit();
-            editor.clear().apply();
-            RequestUtils.getJSONByGet("logout", null);
-            Intent intent = new Intent(this, LoginActivity.class);
-            startActivity(intent);
-            finish();
-        } catch (Exception e) {
-            e.printStackTrace();
         }
     }
 

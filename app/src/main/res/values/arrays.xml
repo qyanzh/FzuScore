@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--MaterialColors-->
+    <array name="colors">
+        <item>#3F50B6</item>
+        <item>#03A8F5</item>
+        <item>#8CC34A</item>
+        <item>#EB1D64</item>
+        <!--<item>#00BCD4</item>-->
+        <!--<item>#9D26B0</item>-->
+        <!--<item>#F64238</item>-->
+        <!--<item>#CEDB3A</item>-->
+        <!--<item>#FFEB3D</item>-->
+        <!--<item>#02968A</item>-->
+    </array>
+
+</resources>

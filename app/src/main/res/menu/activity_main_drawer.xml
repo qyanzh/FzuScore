@@ -1,22 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:showIn="navigation_view">
 
     <group>
         <item
+            android:checked="true"
             android:id="@+id/nav_overview"
             android:icon="@drawable/ic_menu_camera"
-            android:title="@string/string_score_overview" />
+            android:title="我的成绩" />
         <item
             android:id="@+id/nav_analysis"
             android:icon="@drawable/ic_menu_gallery"
-            android:title="@string/string_analyse" />
+            android:title="成绩分析" />
 
     </group>
 
-    <item android:title="班长功能">
+    <item android:title="班长功能" android:visible="false" android:id="@+id/nav_monitor">
         <menu>
             <item
                 android:id="@+id/nav_class_overview"
@@ -24,7 +24,7 @@
                 android:title="@string/string_class_overview" />
         </menu>
     </item>
-    <item android:title="退出">
+    <item android:title="账户">
         <menu>
             <item
                 android:id="@+id/nav_changePassword"

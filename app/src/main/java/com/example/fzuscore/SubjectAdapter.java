@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.text.DecimalFormat;
 import java.util.List;
 
 public class SubjectAdapter extends RecyclerView.Adapter<SubjectAdapter.ViewHolder> {
@@ -18,13 +19,17 @@ public class SubjectAdapter extends RecyclerView.Adapter<SubjectAdapter.ViewHold
         TextView textViewSubject;
         TextView textViewMyScore;
         TextView textViewAvrScore;
+        TextView textViewMyRank;
+        TextView textViewPercent;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             subjectView = itemView;
             textViewSubject = itemView.findViewById(R.id.subject_name);
-            textViewMyScore = itemView.findViewById(R.id.score_mine);
-            textViewAvrScore = itemView.findViewById(R.id.score_aver);
+            textViewMyScore = itemView.findViewById(R.id.subject_score_mine);
+            textViewAvrScore = itemView.findViewById(R.id.subject_score_aver);
+            textViewMyRank = itemView.findViewById(R.id.subject_rank);
+            textViewPercent = itemView.findViewById(R.id.subject_rank_percent);
         }
     }
 
@@ -50,8 +55,11 @@ public class SubjectAdapter extends RecyclerView.Adapter<SubjectAdapter.ViewHold
     public void onBindViewHolder(@NonNull ViewHolder viewHolder, int i) {
         Subject subject = mSubjectList.get(i);
         viewHolder.textViewSubject.setText(subject.getName());
-        viewHolder.textViewMyScore.setText(String.valueOf(subject.getMyScore()));
-        viewHolder.textViewAvrScore.setText(String.valueOf(subject.getAvrScore()));
+        DecimalFormat df = new DecimalFormat("0.00");
+        viewHolder.textViewMyScore.setText(df.format(subject.getMyScore()));
+        viewHolder.textViewAvrScore.setText(df.format(subject.getAvrScore()));
+        viewHolder.textViewMyRank.setText(subject.getRank() + "/" + subject.getAmount());
+        viewHolder.textViewPercent.setText(df.format(subject.getRankPercent()));
     }
 
     @Override

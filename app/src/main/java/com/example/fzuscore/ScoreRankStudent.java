@@ -1,6 +1,9 @@
 package com.example.fzuscore;
 
-public class ScoreRankStudent implements Comparable<ScoreRankStudent>{
+import android.os.Parcel;
+import android.os.Parcelable;
+
+public class ScoreRankStudent implements Comparable<ScoreRankStudent>, Parcelable {
     String name;
     double score;
     int number;
@@ -12,6 +15,25 @@ public class ScoreRankStudent implements Comparable<ScoreRankStudent>{
         this.number = number;
         this.rank = rank;
     }
+
+    protected ScoreRankStudent(Parcel in) {
+        name = in.readString();
+        score = in.readDouble();
+        number = in.readInt();
+        rank = in.readInt();
+    }
+
+    public static final Creator<ScoreRankStudent> CREATOR = new Creator<ScoreRankStudent>() {
+        @Override
+        public ScoreRankStudent createFromParcel(Parcel in) {
+            return new ScoreRankStudent(in);
+        }
+
+        @Override
+        public ScoreRankStudent[] newArray(int size) {
+            return new ScoreRankStudent[size];
+        }
+    };
 
     public int getRank() {
         return rank;
@@ -48,5 +70,18 @@ public class ScoreRankStudent implements Comparable<ScoreRankStudent>{
     @Override
     public int compareTo(ScoreRankStudent o) {
         return (int)(o.score - this.score);
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(name);
+        dest.writeDouble(score);
+        dest.writeInt(number);
+        dest.writeInt(rank);
     }
 }

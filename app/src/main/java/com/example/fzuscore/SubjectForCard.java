@@ -1,6 +1,9 @@
 package com.example.fzuscore;
 
-public class SubjectForCard {
+import android.os.Parcel;
+import android.os.Parcelable;
+
+public class SubjectForCard implements Parcelable {
     String name;
     int term;
     double excellent;
@@ -19,6 +22,28 @@ public class SubjectForCard {
         this.highest = highest;
         this.lowest = lowest;
     }
+
+    protected SubjectForCard(Parcel in) {
+        name = in.readString();
+        term = in.readInt();
+        excellent = in.readDouble();
+        pass = in.readDouble();
+        average = in.readDouble();
+        highest = in.readDouble();
+        lowest = in.readDouble();
+    }
+
+    public static final Creator<SubjectForCard> CREATOR = new Creator<SubjectForCard>() {
+        @Override
+        public SubjectForCard createFromParcel(Parcel in) {
+            return new SubjectForCard(in);
+        }
+
+        @Override
+        public SubjectForCard[] newArray(int size) {
+            return new SubjectForCard[size];
+        }
+    };
 
     public int getTerm() {
         return term;
@@ -76,4 +101,19 @@ public class SubjectForCard {
         this.lowest = lowest;
     }
 
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(name);
+        dest.writeInt(term);
+        dest.writeDouble(excellent);
+        dest.writeDouble(pass);
+        dest.writeDouble(average);
+        dest.writeDouble(highest);
+        dest.writeDouble(lowest);
+    }
 }
