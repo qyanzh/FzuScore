@@ -8,19 +8,17 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
 import android.view.MenuItem;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import rorbin.q.radarview.RadarView;
 
 public class AnalyseActivity extends AppCompatActivity {
 
     List<Fragment> fragmentList = new ArrayList<>();
     List<String> tabTitleList = new ArrayList<>();
-
+    int currentTerm;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -31,8 +29,8 @@ public class AnalyseActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         List<Subject> list = new ArrayList<>();
-        Fragment f1 = RadarViewFragment.newInstance(201701);
-        Fragment f2 = LineChartFragment.newInstance(201701);
+        Fragment f1 = RadarChartFragment.newInstance();
+        Fragment f2 = LineChartFragment.newInstance();
         fragmentList.add(f1);
         fragmentList.add(f2);
         tabTitleList.add("优劣学科分析");
@@ -71,16 +69,16 @@ public class AnalyseActivity extends AppCompatActivity {
                 onBackPressed();
                 break;
             case R.id.menu_analyse_change_term:
-                break;
+                return false;
         }
         return true;
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.activity_analyse, menu);
-        return true;
-    }
+//    @Override
+//    public boolean onCreateOptionsMenu(Menu menu) {
+//        getMenuInflater().inflate(R.menu.activity_analyse, menu);
+//        return true;
+//    }
 
 
 }
