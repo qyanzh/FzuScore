@@ -50,21 +50,17 @@ public class LineChartFragment extends Fragment {
         spf = getActivity().getSharedPreferences("info", MODE_PRIVATE);
         String responseData = spf.getString("scoreJSON", null);
         parseJSON(responseData);
-        System.out.println(responseData);
-        System.out.println(termList.get(0) + " " + rankList.get(0));
-        System.out.println(termList.get(1) + " " + rankList.get(1));
-        System.out.println(termList.get(2) + " " + rankList.get(2));
-        System.out.println(termList.get(3) + " " + rankList.get(3));
 
         for (int i = 0; i < 4; i++) {
             entries.add(new Entry(i, rankList.get(i)));
         }
 
         LineDataSet dataSet = new LineDataSet(entries, "成绩");
-        dataSet.setColor(Color.parseColor("#7d7d7d"));
+        int pink = getResources().getColor(R.color.colorAccent, null);
+        dataSet.setColor(pink);
         dataSet.setCircleRadius(5f);
         dataSet.setValueTextSize(12f);
-        dataSet.setCircleColor(Color.parseColor("#7d7d7d"));
+        dataSet.setCircleColor(Color.BLUE);
         dataSet.setLineWidth(1f);
         LineData lineData = new LineData(dataSet);
         chart.setData(lineData);
@@ -77,7 +73,7 @@ public class LineChartFragment extends Fragment {
         leftAxis.setInverted(true);
 
         XAxis xAxis = chart.getXAxis();
-        xAxis.setTextSize(12f);
+        xAxis.setTextSize(15f);
         xAxis.setSpaceMin(1f);
         xAxis.setSpaceMax(1f);
         xAxis.setDrawAxisLine(true);
@@ -85,6 +81,7 @@ public class LineChartFragment extends Fragment {
         xAxis.setLabelCount(4);
         xAxis.setPosition(XAxis.XAxisPosition.TOP);
         xAxis.setValueFormatter(new IndexAxisValueFormatter(termList));
+        xAxis.setYOffset(-3f);
 
         Description description = new Description();
         description.setEnabled(false);

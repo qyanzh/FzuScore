@@ -13,11 +13,14 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.bigkoo.pickerview.builder.OptionsPickerBuilder;
 import com.bigkoo.pickerview.view.OptionsPickerView;
 import com.github.mikephil.charting.animation.Easing;
 import com.github.mikephil.charting.charts.RadarChart;
+import com.github.mikephil.charting.components.Description;
+import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.RadarData;
@@ -45,6 +48,7 @@ public class RadarChartFragment extends Fragment {
     List<List<String>> subjectNamesList = new ArrayList<>();
     List<List<Float>> percentList = new ArrayList<>();
     int currentTermIndex;
+    TextView textView;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -92,7 +96,10 @@ public class RadarChartFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_radar_chart, container, false);
         radarChart = view.findViewById(R.id.personal_analyse_radar);
+        textView = view.findViewById(R.id.tv_term_radar);
+
         setData();
+
         initChart();
         return view;
     }
@@ -109,28 +116,29 @@ public class RadarChartFragment extends Fragment {
         xAxis.setValueFormatter(new ValueFormatter() {
             @Override
             public String getFormattedValue(float value) {
-                return subjectNamesList.get(currentTermIndex).get((int) value % 6);
+                int length = subjectNamesList.get(currentTermIndex).size();
+                return subjectNamesList.get(currentTermIndex).get((int) value % length);
             }
         });
-        xAxis.setTextColor(Color.RED);
+        xAxis.setTextColor(Color.BLUE);
 
         YAxis yAxis = radarChart.getYAxis();
 //        yAxis.setTypeface(Typeface.DEFAULT);
         //yAxis.setAxisMaximum(100);
         yAxis.setTextSize(9f);
         //yAxis.setInverted(true);
-        //yAxis.setDrawLabels(false);
+        yAxis.setDrawLabels(false);
         yAxis.setTextColor(Color.BLUE);
 
-//        Legend l = radarChart.getLegend();
-//        l.setVerticalAlignment(Legend.LegendVerticalAlignment.TOP);
-//        l.setHorizontalAlignment(Legend.LegendHorizontalAlignment.CENTER);
-//        l.setOrientation(Legend.LegendOrientation.HORIZONTAL);
-//        l.setDrawInside(false);
-//        l.setTypeface(Typeface.DEFAULT);
-//        l.setXEntrySpace(7f);
-//        l.setYEntrySpace(5f);
-//        l.setTextColor(Color.WHITE);
+        Legend l = radarChart.getLegend();
+        l.setVerticalAlignment(Legend.LegendVerticalAlignment.TOP);
+        l.setHorizontalAlignment(Legend.LegendHorizontalAlignment.CENTER);
+        l.setOrientation(Legend.LegendOrientation.HORIZONTAL);
+        l.setDrawInside(false);
+        l.setXEntrySpace(7f);
+        l.setYEntrySpace(5f);
+        l.setEnabled(false);
+        l.setTextColor(Color.WHITE);
     }
 
     private void setData() {
@@ -161,9 +169,10 @@ public class RadarChartFragment extends Fragment {
         data.setValueTextSize(8f);
         data.setDrawValues(true);
 
-        data.setValueTextColor(Color.WHITE);
+        data.setValueTextSize(10f);
+        data.setValueTextColor(Color.BLACK);
 
-
+        textView.setText(terms.get(currentTermIndex));
         radarChart.setData(data);
         radarChart.invalidate();
     }
