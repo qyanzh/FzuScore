@@ -16,7 +16,9 @@ import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
+import com.github.mikephil.charting.formatter.ValueFormatter;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -42,16 +44,16 @@ public class PieChartFragment extends Fragment {
 
         List<PieEntry> entries = new ArrayList<>();
         if(perfect > 0) {
-            entries.add(new PieEntry((float) perfect / total, "优秀"));
+            entries.add(new PieEntry((float) perfect / total, "优秀 " + perfect + "人"));
         }
         if (good > 0) {
-            entries.add(new PieEntry((float) good / total, "良好"));
+            entries.add(new PieEntry((float) good / total, "良好 " + good + "人"));
         }
         if(pass>0) {
-            entries.add(new PieEntry((float) pass / total, "及格"));
+            entries.add(new PieEntry((float) pass / total, "及格 " + pass + "人"));
         }
         if(die>0){
-            entries.add(new PieEntry((float) die / total, "挂科"));
+            entries.add(new PieEntry((float) die / total, "挂科 " + die + "人"));
         }
         PieDataSet dataSet = new PieDataSet(entries, null);
         List<Integer> colors = new ArrayList<>();
@@ -70,6 +72,13 @@ public class PieChartFragment extends Fragment {
         dataSet.setXValuePosition(PieDataSet.ValuePosition.OUTSIDE_SLICE);
         dataSet.setYValuePosition(PieDataSet.ValuePosition.OUTSIDE_SLICE);
 
+        DecimalFormat df = new DecimalFormat("0.00%");
+        dataSet.setValueFormatter(new ValueFormatter() {
+            @Override
+            public String getFormattedValue(float value) {
+                return df.format(value);
+            }
+        });
         PieData pieData = new PieData(dataSet);
 
         PieChart chart = view.findViewById(R.id.pie_chart);
@@ -82,10 +91,9 @@ public class PieChartFragment extends Fragment {
         chart.animateY(500, Easing.EaseInOutCubic);
 
         chart.setEntryLabelColor(Color.BLACK);
-        chart.getLegend().setOrientation(Legend.LegendOrientation.VERTICAL);
-        chart.getLegend().setHorizontalAlignment(Legend.LegendHorizontalAlignment.RIGHT);
-        chart.getLegend().setVerticalAlignment(Legend.LegendVerticalAlignment.TOP);
-
+        chart.getLegend().setOrientation(Legend.LegendOrientation.HORIZONTAL);
+        chart.getLegend().setHorizontalAlignment(Legend.LegendHorizontalAlignment.CENTER);
+        chart.getLegend().setVerticalAlignment(Legend.LegendVerticalAlignment.BOTTOM);
         chart.invalidate();
         return view;
     }

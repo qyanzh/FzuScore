@@ -13,7 +13,7 @@ import android.view.ViewGroup;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TermScoreFragment extends Fragment implements Comparable<TermScoreFragment>{
+public class TermScoreFragment extends Fragment {
     public static TermScoreFragment newInstance(List<Subject> subjectList,int term) {
         TermScoreFragment termScoreFragment = new TermScoreFragment();
         Bundle bundle = new Bundle();
@@ -33,23 +33,24 @@ public class TermScoreFragment extends Fragment implements Comparable<TermScoreF
         return term;
     }
 
+    List<Subject> subjectList;
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        subjectList = getArguments().getParcelableArrayList("subjectList");
+    }
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.content_main, container, false);
-        List<Subject> subjectList = getArguments().getParcelableArrayList("subjectList");
         RecyclerView recyclerView = view.findViewById(R.id.main_recyclerview);
-        SubjectAdapter subjectAdapter;
-        subjectAdapter = new SubjectAdapter(subjectList);
+        SubjectAdapter subjectAdapter = new SubjectAdapter(subjectList);
         recyclerView.setAdapter(subjectAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
         return view;
     }
 
-    @Override
-    public int compareTo(TermScoreFragment o) {
-        return o.term - this.term;
-    }
 
 }

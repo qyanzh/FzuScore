@@ -37,7 +37,7 @@ public class ScoreRankActivity extends AppCompatActivity {
             getSupportActionBar().setTitle(subjectName);
         } else {
             initTermRank();
-            getSupportActionBar().setTitle("总成绩排行榜");
+            getSupportActionBar().setTitle(term + "学期总成绩");
         }
 
         RecyclerView recyclerView = findViewById(R.id.recycler_view_rank);

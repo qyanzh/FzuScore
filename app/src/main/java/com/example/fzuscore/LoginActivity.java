@@ -3,34 +3,16 @@ package com.example.fzuscore;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.PreferenceActivity;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
-import android.text.InputType;
 import android.text.method.HideReturnsTransformationMethod;
 import android.text.method.PasswordTransformationMethod;
 import android.util.Log;
-import android.view.View;
-import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.Switch;
 import android.widget.Toast;
 
-import com.google.gson.Gson;
-
-import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import okhttp3.FormBody;
-import okhttp3.MediaType;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.RequestBody;
-import okhttp3.Response;
 
 /**
  * A login screen that offers login via email/password.
@@ -62,8 +44,8 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-        SharedPreferences spf =getSharedPreferences("info", MODE_PRIVATE);
-        if(spf.getBoolean("logined",false)){
+        SharedPreferences spf = getSharedPreferences("info", MODE_PRIVATE);
+        if (spf.getBoolean("logined", false)) {
             Intent intent = new Intent(this, MainActivity.class);
             startActivity(intent);
             finish();
@@ -84,82 +66,50 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     void sendRequestWithOkHttp() {
-        new Thread(new Runnable() {
 
-            @Override
-            public void run() {
-                OkHttpClient client = new OkHttpClient();
-                try {
-                    LoginAccess loginAccess = new LoginAccess(mAccountNumber.getText().toString(), mPassword.getText().toString());
-                    Gson gson = new Gson();
-                    String json = gson.toJson(loginAccess);
-                    String url = "http://47.112.10.160:3389/api/login";
-                    RequestBody requestBody = FormBody.create(MediaType.parse("application/json; charset=utf-8"), json);
-                    Request request = new Request.Builder()
-                            .url(url)
-                            .post(requestBody)
-                            .build();
-                    Response response = client.newCall(request).execute();
-                    String responseData = response.body().string();
-                    System.out.println(responseData);
-                    parseJSONWithJSONObject(responseData);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
+        try {
+            JSONObject json = new JSONObject();
+            json.put("student_id", mAccountNumber.getText().toString());
+            json.put("student_password", mPassword.getText().toString());
+            String responseData = RequestUtils.getJSONByPost("login", json, null);
+            parseJSONWithJSONObject(responseData);
+        } catch (Exception e) {
+            e.printStackTrace();
 
-            private void parseJSONWithJSONObject(String jsonData) {
-                try {
-                    JSONObject jsonObject = new JSONObject(jsonData);
-                    int isSuccess = jsonObject.getInt("is_success");
-                    String message = jsonObject.getString("message");
-                    Log.d("TAG", "message: " + message);
-                    Log.d("TAG", "Success: " + isSuccess);
-                    //Looper.prepare();
-                    if (isSuccess == 1) {
-                        runOnUiThread(() -> {
-                            Toast.makeText(LoginActivity.this, message, Toast.LENGTH_SHORT).show();
-                        });
-                        JSONObject initData = jsonObject.getJSONObject("data");
-                        SharedPreferences.Editor spf =getSharedPreferences("info", MODE_PRIVATE).edit();
-                        int isMonitor = initData.getInt("is_monitor");
-                        spf.putBoolean("logined", true);
-                        spf.putBoolean("isMonitor",isMonitor==1);
-                        spf.putString("user_account",mAccountNumber.getText().toString());
-                        spf.putString("user_name", initData.getString("student_name"));
-                        spf.apply();
-                        spf.commit();
-                        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                        startActivity(intent);
-                        finish();
-                    } else if (isSuccess == 0) {
-                        runOnUiThread(() -> {
-                            Toast.makeText(LoginActivity.this, message, Toast.LENGTH_SHORT).show();
-                            mPassword.setText("");
-                        });
-                    }
-                    //Looper.loop();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        }).start();
-
+        }
     }
 
-
-
-
-    /**
-     * Callback received when a permissions request has been completed.
-     */
-
-
-    /**
-     * Attempts to sign in or register the account specified by the login form.
-     * If there are form errors (invalid email, missing fields, etc.), the
-     * errors are presented and no actual login attempt is made.
-     */
+    private void parseJSONWithJSONObject(String jsonData) {
+        try {
+            JSONObject jsonObject = new JSONObject(jsonData);
+            int isSuccess = jsonObject.getInt("is_success");
+            String message = jsonObject.getString("message");
+            Log.d("TAG", "message: " + message);
+            Log.d("TAG", "Success: " + isSuccess);
+            //Looper.prepare();
+            if (isSuccess == 1) {
+                runOnUiThread(() -> Toast.makeText(LoginActivity.this, message, Toast.LENGTH_SHORT).show());
+                JSONObject initData = jsonObject.getJSONObject("data");
+                SharedPreferences.Editor spf = getSharedPreferences("info", MODE_PRIVATE).edit();
+                int isMonitor = initData.getInt("is_monitor");
+                spf.putBoolean("logined", true);
+                spf.putBoolean("isMonitor", isMonitor == 1);
+                spf.putString("user_account", mAccountNumber.getText().toString());
+                spf.putString("user_name", initData.getString("student_name"));
+                spf.apply();
+                spf.commit();
+                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                startActivity(intent);
+                finish();
+            } else if (isSuccess == 0) {
+                runOnUiThread(() -> {
+                    Toast.makeText(LoginActivity.this, message, Toast.LENGTH_SHORT).show();
+                    mPassword.setText("");
+                });
+            }
+            //Looper.loop();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }
-
-

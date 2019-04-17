@@ -56,7 +56,7 @@ public class BottomDialogFragment extends BottomSheetDialogFragment {
             @Nullable
             @Override
             public CharSequence getPageTitle(int position) {
-                return position == 0 ? "饼状图" : "柱状图";
+                return position == 0 ? "分段统计" : "柱状图";
             }
         };
         viewPager.setAdapter(adapter);
@@ -73,9 +73,9 @@ public class BottomDialogFragment extends BottomSheetDialogFragment {
         display.getSize(point);
         int height = (point.y) / 2;
         dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT,
-                height + 70);
+                height + 100);
         dialog.getWindow().setGravity(Gravity.BOTTOM);
         View view = dialog.getWindow().findViewById(android.support.design.R.id.design_bottom_sheet);
-        BottomSheetBehavior.from(view).setPeekHeight(height + 70);
+        BottomSheetBehavior.from(view).setPeekHeight(height + 100);
     }
 }
