@@ -44,7 +44,7 @@ public class TermScoreFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.content_main, container, false);
+        View view = inflater.inflate(R.layout.fragment_score, container, false);
         RecyclerView recyclerView = view.findViewById(R.id.main_recyclerview);
         SubjectAdapter subjectAdapter = new SubjectAdapter(subjectList);
         recyclerView.setAdapter(subjectAdapter);
