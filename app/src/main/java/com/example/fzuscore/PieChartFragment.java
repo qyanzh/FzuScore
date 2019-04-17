@@ -30,29 +30,37 @@ public class PieChartFragment extends Fragment {
         return fragment;
     }
 
+    int perfect, good, pass, die, total;
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        Bundle data = getArguments();
+        perfect = data.getInt("perfect");
+        good = data.getInt("good");
+        pass = data.getInt("pass");
+        die = data.getInt("die");
+        total = data.getInt("total");
+    }
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_pie_chart, container, false);
-        Bundle data = getArguments();
-        int perfect = data.getInt("perfect");
-        int good = data.getInt("good");
-        int pass = data.getInt("pass");
-        int die = data.getInt("die");
-        int total = data.getInt("total");
+
 //        DecimalFormat df = new DecimalFormat("0.00%");
 
         List<PieEntry> entries = new ArrayList<>();
-        if(perfect > 0) {
+        if (perfect > 0) {
             entries.add(new PieEntry((float) perfect / total, "优秀 " + perfect + "人"));
         }
         if (good > 0) {
             entries.add(new PieEntry((float) good / total, "良好 " + good + "人"));
         }
-        if(pass>0) {
+        if (pass > 0) {
             entries.add(new PieEntry((float) pass / total, "及格 " + pass + "人"));
         }
-        if(die>0){
+        if (die > 0) {
             entries.add(new PieEntry((float) die / total, "挂科 " + die + "人"));
         }
         PieDataSet dataSet = new PieDataSet(entries, null);

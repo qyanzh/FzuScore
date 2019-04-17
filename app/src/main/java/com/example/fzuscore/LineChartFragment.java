@@ -18,41 +18,27 @@ import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter;
-import com.github.mikephil.charting.formatter.ValueFormatter;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import static android.content.Context.MODE_PRIVATE;
 
 
-public class LineChartFragment extends Fragment{
+public class LineChartFragment extends Fragment {
 
     private SharedPreferences spf;
     private List<String> termList = new ArrayList<>();
     private List<Integer> rankList = new ArrayList<>();
 
-    public static  LineChartFragment newInstance(int term) {
+    public static LineChartFragment newInstance() {
         LineChartFragment lineChartFragment = new LineChartFragment();
-        Bundle bundle = new Bundle();
-        lineChartFragment.setTerm(term);
-        lineChartFragment.setArguments(bundle);
         return lineChartFragment;
     }
 
-    int term;
-
-    public void setTerm(int term) {
-        this.term = term;
-    }
-
-    public int getTerm() {
-        return term;
-    }
 
     @Nullable
     @Override
@@ -61,20 +47,20 @@ public class LineChartFragment extends Fragment{
 
         LineChart chart = view.findViewById(R.id.lineChart);
         ArrayList<Entry> entries = new ArrayList<>();
-        spf = getActivity().getSharedPreferences("info",MODE_PRIVATE);
-        String responseData = spf.getString("scoreJSON",null);
+        spf = getActivity().getSharedPreferences("info", MODE_PRIVATE);
+        String responseData = spf.getString("scoreJSON", null);
         parseJSON(responseData);
         System.out.println(responseData);
-        System.out.println(termList.get(0)+" "+rankList.get(0));
-        System.out.println(termList.get(1)+" "+rankList.get(1));
-        System.out.println(termList.get(2)+" "+rankList.get(2));
-        System.out.println(termList.get(3)+" "+rankList.get(3));
+        System.out.println(termList.get(0) + " " + rankList.get(0));
+        System.out.println(termList.get(1) + " " + rankList.get(1));
+        System.out.println(termList.get(2) + " " + rankList.get(2));
+        System.out.println(termList.get(3) + " " + rankList.get(3));
 
-        for(int i=0;i<4;i++){
-            entries.add(new Entry(i,rankList.get(i)));
+        for (int i = 0; i < 4; i++) {
+            entries.add(new Entry(i, rankList.get(i)));
         }
 
-        LineDataSet dataSet = new LineDataSet(entries,"成绩");
+        LineDataSet dataSet = new LineDataSet(entries, "成绩");
         dataSet.setColor(Color.parseColor("#7d7d7d"));
         dataSet.setCircleRadius(5f);
         dataSet.setValueTextSize(12f);
@@ -112,7 +98,7 @@ public class LineChartFragment extends Fragment{
     private void parseJSON(String responseData) {
         try {
             JSONArray jsonArray = new JSONArray(responseData);
-            for (int i = jsonArray.length()-1; i >= 0; i--) {
+            for (int i = jsonArray.length() - 1; i >= 0; i--) {
                 JSONObject json = jsonArray.getJSONObject(i);
                 int term = json.getInt("term");
                 int rank = json.getInt("rank");

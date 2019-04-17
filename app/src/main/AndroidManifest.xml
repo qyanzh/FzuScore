@@ -20,7 +20,10 @@
             android:name=".ClassOverviewActivity"
             android:parentActivityName=".MainActivity"
             android:theme="@style/AppTheme.NoActionBar"></activity>
-        <activity android:name=".ScoreRankActivity" android:parentActivityName=".MainActivity"></activity>
+        <activity
+            android:name=".ScoreRankActivity"
+            android:parentActivityName=".MainActivity"
+            android:launchMode="singleTask"></activity>
         <activity android:name=".AnalyseActivity" android:parentActivityName=".MainActivity" android:theme="@style/AppTheme.NoActionBar"></activity>
         <activity
             android:name=".LoginActivity"
