@@ -65,7 +65,6 @@ public class ScoreRankActivity extends AppCompatActivity {
             for (int i = 0; i < jsonArray.length(); i++) {
                 JSONObject subjectJSON = jsonArray.getJSONObject(i);
                 String name = subjectJSON.optString("student_name");
-                //double subject_averscore = subjectJSON.optDouble("subject_averscore");
                 int id = subjectJSON.optInt("student_id");
                 double score = subjectJSON.optDouble("score");
                 int rank = subjectJSON.optInt("rank");
@@ -96,7 +95,6 @@ public class ScoreRankActivity extends AppCompatActivity {
             for (int i = 0; i < jsonArray.length(); i++) {
                 JSONObject subjectJSON = jsonArray.getJSONObject(i);
                 String name = subjectJSON.optString("student_name");
-                //double subject_averscore = subjectJSON.optDouble("subject_averscore");
                 int id = subjectJSON.optInt("student_id");
                 double score = subjectJSON.optDouble("subject_score");
                 int rank = subjectJSON.optInt("rank");
