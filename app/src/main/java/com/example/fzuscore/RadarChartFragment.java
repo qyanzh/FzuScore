@@ -19,7 +19,6 @@ import com.bigkoo.pickerview.builder.OptionsPickerBuilder;
 import com.bigkoo.pickerview.view.OptionsPickerView;
 import com.github.mikephil.charting.animation.Easing;
 import com.github.mikephil.charting.charts.RadarChart;
-import com.github.mikephil.charting.components.Description;
 import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
@@ -129,6 +128,7 @@ public class RadarChartFragment extends Fragment {
         //yAxis.setInverted(true);
         yAxis.setDrawLabels(false);
         yAxis.setTextColor(Color.BLUE);
+        yAxis.setAxisMinimum(-50f);
 
         Legend l = radarChart.getLegend();
         l.setVerticalAlignment(Legend.LegendVerticalAlignment.TOP);

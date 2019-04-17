@@ -18,6 +18,7 @@ import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter;
+import com.github.mikephil.charting.formatter.ValueFormatter;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -46,6 +47,7 @@ public class LineChartFragment extends Fragment {
         View view = inflater.inflate(R.layout.line_chart, container, false);
 
         LineChart chart = view.findViewById(R.id.lineChart);
+        chart.setTouchEnabled(false);
         ArrayList<Entry> entries = new ArrayList<>();
         spf = getActivity().getSharedPreferences("info", MODE_PRIVATE);
         String responseData = spf.getString("scoreJSON", null);
@@ -71,7 +73,12 @@ public class LineChartFragment extends Fragment {
         YAxis leftAxis = chart.getAxisLeft();
         leftAxis.setTextSize(15f);
         leftAxis.setInverted(true);
-
+        dataSet.setValueFormatter(new ValueFormatter() {
+            @Override
+            public String getFormattedValue(float value) {
+                return String.valueOf((int) value);
+            }
+        });
         XAxis xAxis = chart.getXAxis();
         xAxis.setTextSize(15f);
         xAxis.setSpaceMin(1f);
