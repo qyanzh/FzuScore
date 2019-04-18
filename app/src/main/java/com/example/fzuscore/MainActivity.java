@@ -192,6 +192,10 @@ public class MainActivity extends AppCompatActivity
                 intent = new Intent(this, ClassOverviewActivity.class);
                 startActivity(intent);
                 break;
+            case R.id.nav_class_analyse:
+                intent = new Intent(this, ClassAnalyseActivity.class);
+                startActivity(intent);
+                break;
             case R.id.nav_changePassword:
                 if (RequestUtils.isWebConnect(this)) {
                     changePassword();

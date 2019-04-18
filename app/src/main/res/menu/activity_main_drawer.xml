@@ -5,7 +5,6 @@
 
     <group>
         <item
-            android:checked="true"
             android:id="@+id/nav_overview"
             android:icon="@drawable/ic_menu_camera"
             android:title="我的成绩" />
@@ -22,6 +21,11 @@
                 android:id="@+id/nav_class_overview"
                 android:icon="@drawable/ic_menu_slideshow"
                 android:title="@string/string_class_overview" />
+            <item
+                android:id="@+id/nav_class_analyse"
+                android:icon="@drawable/ic_menu_slideshow"
+                android:title="班级分析" />
+
         </menu>
     </item>
     <item android:title="账户">

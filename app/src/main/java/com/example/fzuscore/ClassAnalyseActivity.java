@@ -14,27 +14,28 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class AnalyseActivity extends AppCompatActivity {
+public class ClassAnalyseActivity extends AppCompatActivity {
 
     List<Fragment> fragmentList = new ArrayList<>();
     List<String> tabTitleList = new ArrayList<>();
     int currentTerm;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_analyse);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setTitle("成绩分析");
+        getSupportActionBar().setTitle("班级分析");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         List<Subject> list = new ArrayList<>();
-        Fragment f1 = RadarChartFragment.newInstance(0);
-        Fragment f2 = LineChartFragment.newInstance();
+        Fragment f1 = RadarChartFragment.newInstance(1);
+//        Fragment f2 = LineChartFragment.newInstance();
         fragmentList.add(f1);
-        fragmentList.add(f2);
+//        fragmentList.add(f2);
         tabTitleList.add("优劣学科分析");
-        tabTitleList.add("排名趋势");
+//        tabTitleList.add("排名趋势");
         initViewPager();
     }
 

@@ -35,11 +35,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class RadarChartFragment extends Fragment {
-    public static RadarChartFragment newInstance() {
-//        Bundle args = new Bundle();
-//        args.putStringArrayList("terms", (ArrayList<String>) terms);
+    public static RadarChartFragment newInstance(int mode) {
+        Bundle args = new Bundle();
+        args.putInt("mode", mode);
         RadarChartFragment fragment = new RadarChartFragment();
-//        fragment.setArguments(args);
+        fragment.setArguments(args);
         return fragment;
     }
 
@@ -49,12 +49,14 @@ public class RadarChartFragment extends Fragment {
     int currentTermIndex;
     TextView textView;
 
+    int mode;// 0 for personal, 1 for class
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
-//        Bundle args = getArguments();
-//        terms = args.getStringArrayList("term");
+        Bundle args = getArguments();
+        mode = args.getInt("mode");
         SharedPreferences spf = getActivity().getSharedPreferences("info", Context.MODE_PRIVATE);
         parseJSON(spf.getString("scoreJSON", null));
     }
@@ -72,13 +74,17 @@ public class RadarChartFragment extends Fragment {
                 for (int j = 0; j < subjectsArray.length(); j++) {
                     JSONObject subject = subjectsArray.getJSONObject(j);
                     String name = subject.getString("subject_name");
-                    float score = subject.getInt("subject_score");
-                    int rank = subject.getInt("subject_rank");
-                    int amount = subject.getInt("subject_amount");
-                    float percentage = (float) rank / amount * 100;
+                    float percentage;
+                    if (mode == 0) {
+                        float score = subject.getInt("subject_score");
+                        int rank = subject.getInt("subject_rank");
+                        int amount = subject.getInt("subject_amount");
+                        percentage = 100 - (float) rank / amount * 100;
+                    } else {
+                        percentage = (float) subject.getDouble("subject_perfect") * 100;
+                    }
                     nameList.add(name);
-                    percList.add(100 - percentage);
-                    System.out.println(amount - rank);
+                    percList.add(percentage);
                 }
                 subjectNamesList.add(nameList);
                 percentList.add(percList);

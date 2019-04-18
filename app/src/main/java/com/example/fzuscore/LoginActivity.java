@@ -69,9 +69,14 @@ public class LoginActivity extends AppCompatActivity {
 
         try {
             JSONObject json = new JSONObject();
+            Crypt crypt = new Crypt();
             json.put("student_id", mAccountNumber.getText().toString());
-            json.put("student_password", mPassword.getText().toString());
+            System.out.println("encode:" + new String(crypt.encrypt_string(mPassword.getText().toString())));
+            json.put("student_password", new String(crypt.encrypt_string(mPassword.getText().toString())));
+//            json.put("student_id", mAccountNumber.getText().toString());
+//            json.put("student_password", mPassword.getText().toString());
             String responseData = RequestUtils.getJSONByPost("login", json, null);
+            System.out.println(responseData);
             parseJSONWithJSONObject(responseData);
         } catch (Exception e) {
             e.printStackTrace();
