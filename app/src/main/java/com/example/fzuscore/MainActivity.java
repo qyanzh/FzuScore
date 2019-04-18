@@ -96,6 +96,7 @@ public class MainActivity extends AppCompatActivity
             parseJSON(JSON);
         }
         ViewPager viewPager = findViewById(R.id.viewpager);
+        viewPager.setOffscreenPageLimit(4);
         viewPager.getAdapter().notifyDataSetChanged();
     }
 

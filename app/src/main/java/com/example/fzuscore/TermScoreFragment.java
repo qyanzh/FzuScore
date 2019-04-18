@@ -9,6 +9,8 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AnimationUtils;
+import android.view.animation.LayoutAnimationController;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -46,9 +48,18 @@ public class TermScoreFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_score, container, false);
         RecyclerView recyclerView = view.findViewById(R.id.main_recyclerview);
+
+        LayoutAnimationController loadLayoutAnimation = AnimationUtils.loadLayoutAnimation(getContext(), R.anim.layout_animation_slide_in_bottom);
+        recyclerView.setLayoutAnimation(loadLayoutAnimation);
+
+
         SubjectAdapter subjectAdapter = new SubjectAdapter(subjectList);
         recyclerView.setAdapter(subjectAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
+
+        recyclerView.setLayoutAnimation(loadLayoutAnimation);
+        recyclerView.getAdapter().notifyDataSetChanged();
+        recyclerView.scheduleLayoutAnimation();
         return view;
     }
 
