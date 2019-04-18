@@ -1,4 +1,4 @@
-package com.example.fzuscore;
+package com.example.fzuscore.Fragments;
 
 import android.content.res.TypedArray;
 import android.graphics.Color;
@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.example.fzuscore.R;
 import com.github.mikephil.charting.animation.Easing;
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.components.Legend;

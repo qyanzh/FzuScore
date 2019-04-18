@@ -1,4 +1,4 @@
-package com.example.fzuscore;
+package com.example.fzuscore.Activities;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -12,6 +12,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+
+import com.example.fzuscore.DataBeans.SubjectForCard;
+import com.example.fzuscore.Fragments.ClassOverviewFragment;
+import com.example.fzuscore.R;
 
 import org.json.JSONArray;
 import org.json.JSONObject;

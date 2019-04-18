@@ -1,10 +1,13 @@
-package com.example.fzuscore;
+package com.example.fzuscore.Adapters;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
+import com.example.fzuscore.DataBeans.ScoreRankStudent;
+import com.example.fzuscore.R;
 
 import java.text.DecimalFormat;
 import java.util.List;

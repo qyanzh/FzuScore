@@ -1,4 +1,4 @@
-package com.example.fzuscore;
+package com.example.fzuscore.DataBeans;
 
 import android.os.Parcel;
 import android.os.Parcelable;

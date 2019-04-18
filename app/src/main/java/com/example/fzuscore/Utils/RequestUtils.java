@@ -1,4 +1,4 @@
-package com.example.fzuscore;
+package com.example.fzuscore.Utils;
 
 import android.content.Context;
 import android.net.ConnectivityManager;

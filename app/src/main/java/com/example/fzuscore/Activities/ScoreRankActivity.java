@@ -1,4 +1,4 @@
-package com.example.fzuscore;
+package com.example.fzuscore.Activities;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -7,6 +7,12 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuItem;
+
+import com.example.fzuscore.Adapters.ScoreRankAdapter;
+import com.example.fzuscore.DataBeans.ScoreRankStudent;
+import com.example.fzuscore.Fragments.BottomDialogFragment;
+import com.example.fzuscore.R;
+import com.example.fzuscore.Utils.RequestUtils;
 
 import org.json.JSONArray;
 import org.json.JSONException;

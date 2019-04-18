@@ -1,4 +1,4 @@
-package com.example.fzuscore;
+package com.example.fzuscore.Activities;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -9,6 +9,11 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+
+import com.example.fzuscore.DataBeans.Subject;
+import com.example.fzuscore.Fragments.LineChartFragment;
+import com.example.fzuscore.Fragments.RadarChartFragment;
+import com.example.fzuscore.R;
 
 import java.util.ArrayList;
 import java.util.List;

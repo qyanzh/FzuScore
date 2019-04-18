@@ -1,4 +1,4 @@
-package com.example.fzuscore;
+package com.example.fzuscore.Adapters;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
@@ -8,6 +8,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.example.fzuscore.DataBeans.Subject;
+import com.example.fzuscore.R;
 
 import java.text.DecimalFormat;
 import java.util.List;
@@ -35,7 +38,10 @@ public class SubjectAdapter extends RecyclerView.Adapter<SubjectAdapter.ViewHold
 
     private List<Subject> mSubjectList;
     private Context mContext;
-    SubjectAdapter(List<Subject> subjectList) {mSubjectList = subjectList;}
+
+    public SubjectAdapter(List<Subject> subjectList) {
+        mSubjectList = subjectList;
+    }
 
     @NonNull
     @Override

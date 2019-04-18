@@ -1,4 +1,4 @@
-package com.example.fzuscore;
+package com.example.fzuscore.DataBeans;
 
 public class UserInfo {
     static private int student_id;

@@ -1,4 +1,4 @@
-package com.example.fzuscore;
+package com.example.fzuscore.Fragments;
 
 import android.app.Dialog;
 import android.graphics.Point;
@@ -16,6 +16,8 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import com.example.fzuscore.R;
 
 import java.util.ArrayList;
 import java.util.List;

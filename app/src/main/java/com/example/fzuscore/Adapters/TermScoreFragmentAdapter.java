@@ -1,14 +1,15 @@
-package com.example.fzuscore;
+package com.example.fzuscore.Adapters;
 
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
-import java.util.Collections;
+import com.example.fzuscore.Fragments.TermScoreFragment;
+
 import java.util.List;
 
-class TermScoreFragmentAdapter extends FragmentPagerAdapter {
+public class TermScoreFragmentAdapter extends FragmentPagerAdapter {
 
     private List<TermScoreFragment> fragmentList;
 

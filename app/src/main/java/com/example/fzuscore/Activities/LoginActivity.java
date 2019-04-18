@@ -1,4 +1,4 @@
-package com.example.fzuscore;
+package com.example.fzuscore.Activities;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -11,6 +11,10 @@ import android.util.Log;
 import android.widget.EditText;
 import android.widget.Switch;
 import android.widget.Toast;
+
+import com.example.fzuscore.R;
+import com.example.fzuscore.Utils.Crypt;
+import com.example.fzuscore.Utils.RequestUtils;
 
 import org.json.JSONObject;
 

@@ -1,4 +1,4 @@
-package com.example.fzuscore;
+package com.example.fzuscore.Utils;
 
 import android.util.Base64;
 
@@ -32,7 +32,7 @@ public class Crypt {
     private static Crypt instance = null;
 
 
-    Crypt() {
+    public Crypt() {
         SecureRandom random = new SecureRandom();
         Crypt.ivBytes = new byte[16];
         random.nextBytes(Crypt.ivBytes);

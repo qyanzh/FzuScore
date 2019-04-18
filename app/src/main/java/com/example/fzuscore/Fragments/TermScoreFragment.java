@@ -1,4 +1,4 @@
-package com.example.fzuscore;
+package com.example.fzuscore.Fragments;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -12,11 +12,15 @@ import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
 import android.view.animation.LayoutAnimationController;
 
+import com.example.fzuscore.Adapters.SubjectAdapter;
+import com.example.fzuscore.DataBeans.Subject;
+import com.example.fzuscore.R;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class TermScoreFragment extends Fragment {
-    public static TermScoreFragment newInstance(List<Subject> subjectList,int term) {
+    public static TermScoreFragment newInstance(List<Subject> subjectList, int term) {
         TermScoreFragment termScoreFragment = new TermScoreFragment();
         Bundle bundle = new Bundle();
         bundle.putParcelableArrayList("subjectList",(ArrayList<Subject>)subjectList);

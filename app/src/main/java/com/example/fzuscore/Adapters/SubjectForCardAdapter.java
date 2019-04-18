@@ -1,4 +1,4 @@
-package com.example.fzuscore;
+package com.example.fzuscore.Adapters;
 
 import android.content.Context;
 import android.content.Intent;
@@ -8,6 +8,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
+import com.example.fzuscore.Activities.ScoreRankActivity;
+import com.example.fzuscore.DataBeans.SubjectForCard;
+import com.example.fzuscore.R;
 
 import java.text.DecimalFormat;
 import java.util.List;
@@ -62,7 +66,7 @@ public class SubjectForCardAdapter extends RecyclerView.Adapter<SubjectForCardAd
         viewHolder.subjectHighest.setText(df.format(subject.getHighest()));
         viewHolder.subjectLowest.setText(df.format(subject.getLowest()));
         viewHolder.cardView.setOnClickListener(v -> {
-            Intent intent = new Intent(mContext,ScoreRankActivity.class);
+            Intent intent = new Intent(mContext, ScoreRankActivity.class);
             intent.putExtra("subject_name",subject.getName());
             mContext.startActivity(intent);
         });

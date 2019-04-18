@@ -1,4 +1,4 @@
-package com.example.fzuscore;
+package com.example.fzuscore.Activities;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -22,6 +22,14 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.example.fzuscore.Adapters.TermScoreFragmentAdapter;
+import com.example.fzuscore.DataBeans.Subject;
+import com.example.fzuscore.DataBeans.UserInfo;
+import com.example.fzuscore.Fragments.TermScoreFragment;
+import com.example.fzuscore.R;
+import com.example.fzuscore.Utils.Crypt;
+import com.example.fzuscore.Utils.RequestUtils;
 
 import org.json.JSONArray;
 import org.json.JSONException;
