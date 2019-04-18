@@ -38,6 +38,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
+        android:maxLength="12"
         android:id="@+id/et_account_number"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -58,6 +59,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:gravity="center"
+        android:maxLength="12"
         android:layout_marginTop="30dp"
         android:inputType="textPassword"
         android:maxLines="1"

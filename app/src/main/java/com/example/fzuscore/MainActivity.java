@@ -220,7 +220,6 @@ public class MainActivity extends AppCompatActivity
                 }
                 break;
         }
-
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
@@ -243,39 +242,44 @@ public class MainActivity extends AppCompatActivity
         dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(v -> {
             String newPass = newPassword.getText().toString();
             String cofPass = confirmPassword.getText().toString();
-            if (newPass.equals(cofPass)) {
-                JSONObject requestJSON = new JSONObject();
-                try {
-                    requestJSON.put("student_id", UserInfo.getStudent_id());
-                    requestJSON.put("password_old", originPassword.getText().toString());
-                    requestJSON.put("password_new", newPass);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-                StringBuilder responseJSON = new StringBuilder();
-                responseJSON.append(RequestUtils.getJSONByPost("change_password", requestJSON, new RequestUtils.ResponseListener() {
-                    @Override
-                    public void onResponseSuccess() {
+            if (isLegal(newPass)) {
+                if (newPass.equals(cofPass)) {
+                    JSONObject requestJSON = new JSONObject();
+                    try {
+                        requestJSON.put("student_id", UserInfo.getStudent_id());
+                        Crypt crypt = new Crypt();
+                        requestJSON.put("password_old", crypt.encrypt_string(originPassword.getText().toString()));
+                        requestJSON.put("password_new", crypt.encrypt_string(newPass));
+                    } catch (Exception e) {
+                        e.printStackTrace();
                     }
+                    StringBuilder responseJSON = new StringBuilder();
+                    responseJSON.append(RequestUtils.getJSONByPost("change_password", requestJSON, new RequestUtils.ResponseListener() {
+                        @Override
+                        public void onResponseSuccess() {
+                        }
 
-                    @Override
-                    public void onResponseFailed() {
-                        Toast.makeText(MainActivity.this, "服务器异常.请重试", Toast.LENGTH_SHORT).show();
+                        @Override
+                        public void onResponseFailed() {
+                            Toast.makeText(MainActivity.this, "服务器异常.请重试", Toast.LENGTH_SHORT).show();
+                        }
+                    }));
+                    try {
+                        JSONObject JSON = new JSONObject(responseJSON.toString());
+                        Toast.makeText(this, JSON.getString("message"), Toast.LENGTH_SHORT).show();
+                        if (JSON.getInt("is_success") == 1) {
+                            quitAccount();
+                            dialog.dismiss();
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
                     }
-                }));
-                try {
-                    JSONObject JSON = new JSONObject(responseJSON.toString());
-                    Toast.makeText(this, JSON.getString("message"), Toast.LENGTH_SHORT).show();
-                    if (JSON.getInt("is_success") == 1) {
-                        quitAccount();
-                        dialog.dismiss();
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
+                } else {
+                    System.out.println("不一致");
+                    Toast.makeText(this, "两次新密码输入不一致,请检查", Toast.LENGTH_SHORT).show();
                 }
             } else {
-                System.out.println("不一致");
-                Toast.makeText(this, "两次新密码输入不一致,请检查", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "密码只能由数字/字母/小数点/下划线构成,长度8-12位", Toast.LENGTH_SHORT).show();
             }
         });
         dialog.getButton(AlertDialog.BUTTON_NEUTRAL).setOnClickListener(view -> {
@@ -290,6 +294,17 @@ public class MainActivity extends AppCompatActivity
             }
             isChecked = !isChecked;
         });
+    }
+
+    private boolean isLegal(String newPass) {
+        int len = newPass.length();
+        if (len <= 8 || len > 12) return false;
+        for (int i = 0; i < len; i++) {
+            char c = newPass.charAt(i);
+            if (!Character.isLetterOrDigit(c) && c != '_' && c != '.')
+                return false;
+        }
+        return true;
     }
 
     boolean isChecked = false;
