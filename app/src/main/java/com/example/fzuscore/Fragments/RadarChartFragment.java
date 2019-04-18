@@ -199,7 +199,11 @@ public class RadarChartFragment extends Fragment {
                     currentTermIndex = options1;
                     setData();
                     initChart();
-                }).build();
+                })
+                        .setSubmitText("确定")
+                        .setCancelText("取消")
+                        .setSelectOptions(currentTermIndex)
+                        .build();
                 pvOptions.setPicker(terms);
                 pvOptions.show();
                 break;

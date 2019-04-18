@@ -6,11 +6,11 @@
     <group>
         <item
             android:id="@+id/nav_overview"
-            android:icon="@drawable/ic_menu_camera"
+            android:icon="@drawable/ic_menu_score"
             android:title="我的成绩" />
         <item
             android:id="@+id/nav_analysis"
-            android:icon="@drawable/ic_menu_gallery"
+            android:icon="@drawable/ic_menu_analysis"
             android:title="成绩分析" />
 
     </group>
@@ -19,11 +19,11 @@
         <menu>
             <item
                 android:id="@+id/nav_class_overview"
-                android:icon="@drawable/ic_menu_slideshow"
+                android:icon="@drawable/ic_menu_overview"
                 android:title="@string/string_class_overview" />
             <item
                 android:id="@+id/nav_class_analyse"
-                android:icon="@drawable/ic_menu_slideshow"
+                android:icon="@drawable/ic_menu_radar"
                 android:title="班级分析" />
 
         </menu>
@@ -32,12 +32,12 @@
         <menu>
             <item
                 android:id="@+id/nav_changePassword"
-                android:icon="@drawable/ic_menu_manage"
+                android:icon="@drawable/ic_menu_edit"
                 android:title="修改密码" />
 
             <item
                 android:id="@+id/nav_logout"
-                android:icon="@drawable/ic_menu_slideshow"
+                android:icon="@drawable/ic_menu_exit"
                 android:title="@string/string_logout" />
         </menu>
     </item>

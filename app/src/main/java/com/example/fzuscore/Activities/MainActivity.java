@@ -183,7 +183,9 @@ public class MainActivity extends AppCompatActivity
                     ViewPager viewPager = findViewById(R.id.viewpager);
                     RecyclerView recyclerView ;
                     recyclerView = viewPager.findViewById(R.id.main_recyclerview);
-                    runLayoutAnimation(recyclerView);
+                    if(recyclerView!=null) {
+                        runLayoutAnimation(recyclerView);
+                    }
                     viewPager.getAdapter().notifyDataSetChanged();
                 }
                 break;
