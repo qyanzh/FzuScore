@@ -1,4 +1,4 @@
-package com.example.fzuscore;
+package com.example.fzuscore.Utils;
 
 /**
  * Created by Patrick Ivarsson on 7/17/17.
