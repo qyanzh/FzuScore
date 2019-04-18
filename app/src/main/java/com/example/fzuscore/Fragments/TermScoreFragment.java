@@ -47,11 +47,17 @@ public class TermScoreFragment extends Fragment {
         subjectList = getArguments().getParcelableArrayList("subjectList");
     }
 
+    RecyclerView recyclerView;
+
+    public RecyclerView getRecyclerView() {
+        return recyclerView;
+    }
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_score, container, false);
-        RecyclerView recyclerView = view.findViewById(R.id.main_recyclerview);
+       recyclerView = view.findViewById(R.id.main_recyclerview);
 
         LayoutAnimationController loadLayoutAnimation = AnimationUtils.loadLayoutAnimation(getContext(), R.anim.layout_animation_slide_in_bottom);
         recyclerView.setLayoutAnimation(loadLayoutAnimation);
@@ -60,10 +66,6 @@ public class TermScoreFragment extends Fragment {
         SubjectAdapter subjectAdapter = new SubjectAdapter(subjectList);
         recyclerView.setAdapter(subjectAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
-
-        recyclerView.setLayoutAnimation(loadLayoutAnimation);
-        recyclerView.getAdapter().notifyDataSetChanged();
-        recyclerView.scheduleLayoutAnimation();
         return view;
     }
 

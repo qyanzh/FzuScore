@@ -7,6 +7,8 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AnimationUtils;
+import android.view.animation.LayoutAnimationController;
 
 import com.example.fzuscore.Adapters.SubjectForCardAdapter;
 import com.example.fzuscore.DataBeans.SubjectForCard;
@@ -54,6 +56,10 @@ public class ClassOverviewFragment extends Fragment {
         SubjectForCardAdapter adapter = new SubjectForCardAdapter(subjectList);
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
+
+        LayoutAnimationController loadLayoutAnimation = AnimationUtils.loadLayoutAnimation(getContext(), R.anim.layout_animation_slide_in_bottom);
+        recyclerView.setLayoutAnimation(loadLayoutAnimation);
+
         System.out.println("list" + term + subjectList);
         return view;
     }
