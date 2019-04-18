@@ -1,5 +1,6 @@
 package com.example.fzuscore;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -12,6 +13,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.method.HideReturnsTransformationMethod;
 import android.text.method.PasswordTransformationMethod;
@@ -19,6 +21,8 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.AnimationUtils;
+import android.view.animation.LayoutAnimationController;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -169,6 +173,9 @@ public class MainActivity extends AppCompatActivity
                     spf.edit().putString("scoreJSON", JSON).apply();
                     parseJSON(JSON);
                     ViewPager viewPager = findViewById(R.id.viewpager);
+                    RecyclerView recyclerView ;
+                    recyclerView = viewPager.findViewById(R.id.main_recyclerview);
+                    runLayoutAnimation(recyclerView);
                     viewPager.getAdapter().notifyDataSetChanged();
                 }
                 break;
@@ -316,5 +323,15 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+    private void runLayoutAnimation(RecyclerView recyclerView) {
+        final Context context = recyclerView.getContext();
+
+        final LayoutAnimationController controller =
+                AnimationUtils.loadLayoutAnimation(context,R.anim.layout_animation_slide_in_bottom);
+
+        recyclerView.setLayoutAnimation(controller);
+        recyclerView.getAdapter().notifyDataSetChanged();
+        recyclerView.scheduleLayoutAnimation();
+    }
 
 }
