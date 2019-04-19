@@ -6,11 +6,13 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -23,10 +25,13 @@ import com.github.mikephil.charting.charts.RadarChart;
 import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
+import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.RadarData;
 import com.github.mikephil.charting.data.RadarDataSet;
 import com.github.mikephil.charting.data.RadarEntry;
 import com.github.mikephil.charting.formatter.ValueFormatter;
+import com.github.mikephil.charting.highlight.Highlight;
+import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -113,6 +118,10 @@ public class RadarChartFragment extends Fragment {
     private void initChart() {
         radarChart.animateXY(1400, 1400, Easing.EaseInOutQuad);
         radarChart.getDescription().setEnabled(false);
+        radarChart.getDescription().setText("击败同学（%）");
+        int pink = getResources().getColor(R.color.colorAccent, null);
+        radarChart.getDescription().setTextColor(pink);
+        radarChart.getDescription().setTextSize(10f);
         radarChart.setRotationEnabled(false);
         XAxis xAxis = radarChart.getXAxis();
         //xAxis.setTypeface(Typeface.DEFAULT);
@@ -181,6 +190,18 @@ public class RadarChartFragment extends Fragment {
 
         textView.setText(terms.get(currentTermIndex));
         radarChart.setData(data);
+        radarChart.setOnChartValueSelectedListener(new OnChartValueSelectedListener() {
+            @Override
+            public void onValueSelected(Entry e, Highlight h) {
+                Snackbar.make(getView(), "击败"+e.getY()+"%的同学", Snackbar.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onNothingSelected() {
+
+            }
+        });
+
         radarChart.invalidate();
     }
 
