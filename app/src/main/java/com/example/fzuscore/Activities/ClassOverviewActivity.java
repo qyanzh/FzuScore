@@ -8,7 +8,6 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -23,7 +22,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ClassOverviewActivity extends AppCompatActivity {
+public class ClassOverviewActivity extends BaseActivity {
 
     private SharedPreferences spf;
     List<Fragment> fragmentList = new ArrayList<>();
@@ -33,7 +32,7 @@ public class ClassOverviewActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_class);
-        Toolbar toolbar = findViewById(R.id.toolbar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle("班级概览");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -68,8 +67,8 @@ public class ClassOverviewActivity extends AppCompatActivity {
                 return termList.get(position) + "";
             }
         };
-        TabLayout tabLayout = findViewById(R.id.tabs);
-        ViewPager viewPager = findViewById(R.id.viewpager);
+        TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
+        ViewPager viewPager = (ViewPager) findViewById(R.id.viewpager);
         viewPager.setAdapter(adapter);
         viewPager.setOffscreenPageLimit(4);
         tabLayout.setupWithViewPager(viewPager);
@@ -113,7 +112,7 @@ public class ClassOverviewActivity extends AppCompatActivity {
                 break;
             case R.id.menu_class_term_total:
                 Intent intent = new Intent(ClassOverviewActivity.this, ScoreRankActivity.class);
-                ViewPager viewPager = findViewById(R.id.viewpager);
+                ViewPager viewPager = (ViewPager) findViewById(R.id.viewpager);
                 intent.putExtra("term", termList.get(viewPager.getCurrentItem()));
                 startActivity(intent);
                 break;

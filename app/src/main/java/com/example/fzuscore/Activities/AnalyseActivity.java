@@ -6,7 +6,6 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
@@ -19,7 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class AnalyseActivity extends AppCompatActivity {
+public class AnalyseActivity extends BaseActivity {
 
     List<Fragment> fragmentList = new ArrayList<>();
     List<String> tabTitleList = new ArrayList<>();
@@ -28,7 +27,7 @@ public class AnalyseActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_analyse);
-        Toolbar toolbar = findViewById(R.id.toolbar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle("成绩分析");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -61,8 +60,8 @@ public class AnalyseActivity extends AppCompatActivity {
                 return tabTitleList.get(position);
             }
         };
-        TabLayout tabLayout = findViewById(R.id.tabs);
-        ViewPager viewPager = findViewById(R.id.viewpager);
+        TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
+        ViewPager viewPager = (ViewPager) findViewById(R.id.viewpager);
         viewPager.setAdapter(adapter);
         tabLayout.setupWithViewPager(viewPager);
     }
@@ -78,6 +77,7 @@ public class AnalyseActivity extends AppCompatActivity {
         }
         return true;
     }
+
 
 //    @Override
 //    public boolean onCreateOptionsMenu(Menu menu) {

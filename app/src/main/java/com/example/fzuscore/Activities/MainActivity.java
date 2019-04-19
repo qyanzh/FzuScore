@@ -205,6 +205,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
+
         int id = item.getItemId();
         Intent intent;
         switch (id) {
@@ -239,7 +240,9 @@ public class MainActivity extends AppCompatActivity
                 break;
         }
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
-        drawer.closeDrawer(GravityCompat.START);
+        drawer.closeDrawer(GravityCompat.START, false);
+
+
         return true;
     }
 
@@ -367,4 +370,9 @@ public class MainActivity extends AppCompatActivity
         recyclerView.scheduleLayoutAnimation();
     }
 
+    @Override
+    protected void onPause() {
+        overridePendingTransition(R.anim.base_slide_right_in, R.anim.base_slide_remain);
+        super.onPause();
+    }
 }

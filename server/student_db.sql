@@ -29,12 +29,14 @@ CREATE TABLE IF NOT EXISTS course_stat(
   course_average DECIMAL(4,2),
   course_number INTEGER UNSIGNED,
   course_max TINYINT UNSIGNED,
-  course_min TINYINT UNSIGNED
-  FOREIGN KEY course_id references courses(course_id) ON DELETE CASCADE,
-)
+  course_min TINYINT UNSIGNED,
+  course_perfect DECIMAL(4,2),
+  course_pass DECIMAL(4,2),
+  FOREIGN KEY course_id references courses(course_id) ON DELETE CASCADE
+);
 CREATE TABLE IF NOT EXISTS student_rank(
   student_id INTEGER UNSIGNED,
   term INTEGER UNSIGNED,
   average_score DECIMAL(4,2),
   rank TINYINT UNSIGNED
-)
+);
