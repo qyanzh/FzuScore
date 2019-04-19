@@ -13,6 +13,12 @@
         <item name="windowNoTitle">true</item>
     </style>
 
+    <style name="AppTheme.Login">
+        <item name="android:statusBarColor">#2771F2</item>
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
     <style name="AppTheme.Launcher">
         <item name="android:windowBackground">@drawable/app_bg_launcher</item>
         <item name="android:navigationBarColor">@color/colorPrimary</item>
