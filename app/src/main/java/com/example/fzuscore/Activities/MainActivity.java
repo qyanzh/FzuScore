@@ -132,13 +132,14 @@ public class MainActivity extends AppCompatActivity
             }
         });
         spf.edit().putString("scoreJSON", JSON).apply();
-        System.out.println("getFrom");
+        System.out.println("getFrom" + JSON);
         return JSON;
     }
 
 
     private void parseJSON(String responseData) {
         try {
+            boolean isMonitor = UserInfo.isIsMonitor();
             JSONArray jsonArray = new JSONArray(responseData);
             for (int i = 0; i < jsonArray.length(); i++) {
                 List<Subject> subjectList = new ArrayList<>();
@@ -153,6 +154,13 @@ public class MainActivity extends AppCompatActivity
                     double subject_averscore = subjectJSON.getDouble("subject_averscore");
                     int subject_amount = subjectJSON.getInt("subject_amount");
                     subjectList.add(new Subject(subject_name, subject_score, subject_averscore, subject_rank, subject_amount));
+                }
+                if (isMonitor) {
+                    JSONObject jsonObject = new JSONObject();
+                    jsonObject.put("term", term);
+                    String responseTermClassData = RequestUtils.getJSONByPost("rank_list", jsonObject, null);
+                    System.out.println(responseTermClassData);
+                    spf.edit().putString("classTotalScoreJSON" + term, responseTermClassData).apply();
                 }
                 termSubjectList.add(subjectList);
                 termScoreFragmentList.add(TermScoreFragment.newInstance(subjectList, term));
@@ -181,9 +189,9 @@ public class MainActivity extends AppCompatActivity
                     spf.edit().putString("scoreJSON", JSON).apply();
                     parseJSON(JSON);
                     ViewPager viewPager = findViewById(R.id.viewpager);
-                    RecyclerView recyclerView ;
+                    RecyclerView recyclerView;
                     recyclerView = viewPager.findViewById(R.id.main_recyclerview);
-                    if(recyclerView!=null) {
+                    if (recyclerView != null) {
                         runLayoutAnimation(recyclerView);
                     }
                     viewPager.getAdapter().notifyDataSetChanged();
@@ -308,7 +316,7 @@ public class MainActivity extends AppCompatActivity
 
     private boolean isLegal(String newPass) {
         int len = newPass.length();
-        if (len <= 8 || len > 12) return false;
+        if (len < 8 || len > 12) return false;
         for (int i = 0; i < len; i++) {
             char c = newPass.charAt(i);
             if (!Character.isLetterOrDigit(c) && c != '_' && c != '.')
@@ -352,7 +360,7 @@ public class MainActivity extends AppCompatActivity
         final Context context = recyclerView.getContext();
 
         final LayoutAnimationController controller =
-                AnimationUtils.loadLayoutAnimation(context,R.anim.layout_animation_slide_in_bottom);
+                AnimationUtils.loadLayoutAnimation(context, R.anim.layout_animation_slide_in_bottom);
 
         recyclerView.setLayoutAnimation(controller);
         recyclerView.getAdapter().notifyDataSetChanged();
