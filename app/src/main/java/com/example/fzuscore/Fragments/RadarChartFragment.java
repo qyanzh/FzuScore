@@ -12,7 +12,6 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -37,6 +36,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -193,7 +193,8 @@ public class RadarChartFragment extends Fragment {
         radarChart.setOnChartValueSelectedListener(new OnChartValueSelectedListener() {
             @Override
             public void onValueSelected(Entry e, Highlight h) {
-                Snackbar.make(getView(), "击败"+e.getY()+"%的同学", Snackbar.LENGTH_SHORT).show();
+                DecimalFormat df = new DecimalFormat("0.00");
+                Snackbar.make(getView(), subjectNamesList.get(currentTermIndex).get((int) h.getX()) + " 击败了" + df.format(e.getY()) + "%的同学", Snackbar.LENGTH_SHORT).show();
             }
 
             @Override
