@@ -1,6 +1,7 @@
 package com.example.fzuscore.Activities;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -55,9 +56,8 @@ public class ScoreRankActivity extends AppCompatActivity {
 
     private void initTermRank() {
         try {
-            JSONObject jsonObject = new JSONObject();
-            jsonObject.put("term", term);
-            String responseData = RequestUtils.getJSONByPost("rank_list", jsonObject, null);
+            SharedPreferences spf = getSharedPreferences("info", MODE_PRIVATE);
+            String responseData = spf.getString("classTotalScoreJSON" + term, "");
             parseTermJSON(responseData);
         } catch (Exception e) {
             e.printStackTrace();

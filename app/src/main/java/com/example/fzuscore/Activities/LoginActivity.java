@@ -18,28 +18,8 @@ import com.example.fzuscore.Utils.RequestUtils;
 
 import org.json.JSONObject;
 
-/**
- * A login screen that offers login via email/password.
- */
 public class LoginActivity extends AppCompatActivity {
 
-    /**
-     * Id to identity READ_CONTACTS permission request.
-     */
-    private static final int REQUEST_READ_CONTACTS = 0;
-
-    /**
-     * A dummy authentication store containing known user names and passwords.
-     * TODO: remove after connecting to a real authentication system.
-     */
-    private static final String[] DUMMY_CREDENTIALS = new String[]{
-            "foo@example.com:hello", "bar@example.com:world"
-    };
-    /**
-     * Keep track of the login task to ensure we can cancel it if requested.
-     */
-
-    // UI references.
     private EditText mAccountNumber;
     private EditText mPassword;
     Switch switchDisplayPassword;
@@ -77,8 +57,6 @@ public class LoginActivity extends AppCompatActivity {
             json.put("student_id", mAccountNumber.getText().toString());
             System.out.println("encode:" + new String(crypt.encrypt_string(mPassword.getText().toString())));
             json.put("student_password", new String(crypt.encrypt_string(mPassword.getText().toString())));
-//            json.put("student_id", mAccountNumber.getText().toString());
-//            json.put("student_password", mPassword.getText().toString());
             String responseData = RequestUtils.getJSONByPost("login", json, null);
             System.out.println(responseData);
             parseJSONWithJSONObject(responseData);
@@ -95,7 +73,6 @@ public class LoginActivity extends AppCompatActivity {
             String message = jsonObject.getString("message");
             Log.d("TAG", "message: " + message);
             Log.d("TAG", "Success: " + isSuccess);
-            //Looper.prepare();
             if (isSuccess == 1) {
                 runOnUiThread(() -> Toast.makeText(LoginActivity.this, message, Toast.LENGTH_SHORT).show());
                 JSONObject initData = jsonObject.getJSONObject("data");
@@ -116,7 +93,6 @@ public class LoginActivity extends AppCompatActivity {
                     mPassword.setText("");
                 });
             }
-            //Looper.loop();
         } catch (Exception e) {
             e.printStackTrace();
         }
