@@ -208,7 +208,7 @@ public class RadarChartFragment extends Fragment {
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.activity_analyse, menu);
+        inflater.inflate(R.menu.menu_change_term, menu);
         super.onCreateOptionsMenu(menu, inflater);
     }
 
