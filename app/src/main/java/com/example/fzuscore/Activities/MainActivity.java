@@ -271,7 +271,7 @@ public class MainActivity extends AppCompatActivity
                         ActivityCompat.requestPermissions(MainActivity.this, PERMISSIONS_STORAGE,REQUEST_EXTERNAL_STORAGE);
                     } else {
                         writeExcel(path.toString(),mSubjectList);
-                        Toast.makeText(MainActivity.this,"导出EXCEL成功",Toast.LENGTH_SHORT).show();
+                        Toast.makeText(MainActivity.this,"成功导出EXCEL到SD卡",Toast.LENGTH_SHORT).show();
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
