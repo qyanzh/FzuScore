@@ -1,16 +1,46 @@
 package com.example.fzuscore.DataBeans;
 
+import com.bin.david.form.annotation.SmartColumn;
+import com.bin.david.form.annotation.SmartTable;
+
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class StudentTotalScore {
-    int id;
+@SmartTable(name = "进步排名")
+public class StudentTotalScore implements Comparable<StudentTotalScore> {
+    @SmartColumn(id = 1, name = "姓名")
     String name;
+    @SmartColumn(id = 2, name = "学号")
+    String id_str;
+    int id;
+    @SmartColumn(id = 3, name = "成绩")
+    String currentScore_str;
+    @SmartColumn(id = 4, name = "排名")
+    int currentRank;
+    @SmartColumn(id = 5, name = "上次")
+    int currentLastRank;
+    @SmartColumn(id = 6, name = "变化")
+    int currentProgress;
+
+    DecimalFormat df = new DecimalFormat("0.00");
+
+    public void onTermChanged(int index) {
+        currentScore_str = df.format(scoreList.get(index));
+        currentRank = rankList.get(index);
+        currentLastRank = rankList.get(index + 1);
+        currentProgress = progressList.get(index);
+    }
+
+    List<Double> scoreList = new ArrayList<>();
+    List<Integer> rankList = new ArrayList<>();
+    List<Integer> progressList = new ArrayList<>();
 
     public StudentTotalScore(int id, String name) {
         this.id = id;
         this.name = name;
+        this.id_str = "0" + id;
     }
 
     public int getId() {
@@ -53,9 +83,7 @@ public class StudentTotalScore {
         this.progressList = progressList;
     }
 
-    List<Double> scoreList = new ArrayList<>();
-    List<Integer> rankList = new ArrayList<>();
-    List<Integer> progressList = new ArrayList<>();
+
 
     public void calculateProgress() {
         for (int i = 0; i < rankList.size() - 1; i++) {
@@ -74,5 +102,10 @@ public class StudentTotalScore {
     @Override
     public int hashCode() {
         return Objects.hash(id);
+    }
+
+    @Override
+    public int compareTo(StudentTotalScore o) {
+        return o.currentProgress - this.currentProgress;
     }
 }

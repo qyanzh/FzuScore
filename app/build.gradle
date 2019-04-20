@@ -25,6 +25,7 @@ android {
 }
 
 dependencies {
+    implementation 'com.github.huangyanbin:SmartTable:2.2.0'
     implementation 'me.imid.swipebacklayout.lib:library:1.1.0'
     implementation 'com.github.tozny:java-aes-crypto:1.1.0'
     implementation group: 'net.sourceforge.jexcelapi', name: 'jxl', version: '2.6.12'

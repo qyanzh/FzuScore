@@ -3,16 +3,26 @@ package com.example.fzuscore.DataBeans;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.bin.david.form.annotation.SmartColumn;
+import com.bin.david.form.annotation.SmartTable;
+
+@SmartTable(name = "成绩排名")
 public class ScoreRankStudent implements Comparable<ScoreRankStudent>, Parcelable {
+    @SmartColumn(id = 1, name = "姓名")
     String name;
-    double score;
     int number;
+    @SmartColumn(id = 2, name = "学号")
+    String number_str;
+    @SmartColumn(id = 3, name = "成绩")
+    double score;
+    @SmartColumn(id = 4, name = "排名")
     int rank;
 
-    public ScoreRankStudent(String name, double score, int number,int rank) {
+    public ScoreRankStudent(String name, double score, int number, int rank) {
         this.name = name;
         this.score = score;
         this.number = number;
+        this.number_str = "0" + number;
         this.rank = rank;
     }
 

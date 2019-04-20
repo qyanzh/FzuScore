@@ -4,12 +4,10 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import com.example.fzuscore.Adapters.ScoreRankAdapter;
+import com.bin.david.form.core.SmartTable;
 import com.example.fzuscore.DataBeans.ScoreRankStudent;
 import com.example.fzuscore.Fragments.BottomDialogFragment;
 import com.example.fzuscore.R;
@@ -47,11 +45,11 @@ public class ScoreRankActivity extends AppCompatActivity {
             getSupportActionBar().setTitle(term + "学期总成绩");
         }
 
-        RecyclerView recyclerView = findViewById(R.id.recycler_view_rank);
-        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
-        recyclerView.setLayoutManager(layoutManager);
-        ScoreRankAdapter adapter = new ScoreRankAdapter(studentList);
-        recyclerView.setAdapter(adapter);
+        SmartTable<ScoreRankStudent> table = findViewById(R.id.table);
+        table.setData(studentList);
+        table.getConfig().setShowTableTitle(false);
+        table.getConfig().setHorizontalPadding(20);
+        table.getConfig().setMinTableWidth(getWindow().getWindowManager().getDefaultDisplay().getWidth());
     }
 
     private void initTermRank() {

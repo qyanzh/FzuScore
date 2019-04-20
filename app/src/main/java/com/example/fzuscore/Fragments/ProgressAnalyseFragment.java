@@ -4,8 +4,6 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -15,9 +13,8 @@ import android.view.ViewGroup;
 
 import com.bigkoo.pickerview.builder.OptionsPickerBuilder;
 import com.bigkoo.pickerview.view.OptionsPickerView;
-import com.example.fzuscore.Adapters.ProgressRankAdapter;
+import com.bin.david.form.core.SmartTable;
 import com.example.fzuscore.DataBeans.StudentTotalScore;
-import com.example.fzuscore.DataBeans.StudentTotalScoreComparator;
 import com.example.fzuscore.R;
 
 import org.json.JSONArray;
@@ -35,9 +32,6 @@ public class ProgressAnalyseFragment extends Fragment {
 
     public static ProgressAnalyseFragment newInstance() {
         ProgressAnalyseFragment fragment = new ProgressAnalyseFragment();
-//        Bundle args = new Bundle();
-//
-//        fragment.setArguments(args);
         return fragment;
     }
 
@@ -86,27 +80,37 @@ public class ProgressAnalyseFragment extends Fragment {
                 value.calculateProgress();
             }
             list = new ArrayList<>(termRankMap.values());
-            Collections.sort(list, new StudentTotalScoreComparator(currentTermIndex));
+            list.forEach(s -> s.onTermChanged(currentTermIndex));
+            Collections.sort(list);
         } catch (JSONException e) {
             e.printStackTrace();
         }
     }
 
     List<StudentTotalScore> list;
-    RecyclerView recyclerView;
-    ProgressRankAdapter adapter;
+    //    RecyclerView recyclerView;
+//    ProgressRankAdapter adapter;
+    SmartTable<StudentTotalScore> table;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_progress_analyse, container, false);
-        recyclerView = view.findViewById(R.id.recycler_view_rank);
-        adapter = new ProgressRankAdapter(list, currentTermIndex);
-        recyclerView.setAdapter(adapter);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+//        recyclerView = view.findViewById(R.id.recycler_view_rank);
+//        adapter = new ProgressRankAdapter(list, currentTermIndex);
+//        recyclerView.setAdapter(adapter);
+//        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        table = view.findViewById(R.id.table);
+        table.setData(list);
+        table.getConfig().setShowTableTitle(false);
+        table.getConfig().setHorizontalPadding(20);
+        table.getConfig().setShowXSequence(false);
+        table.getConfig().setShowYSequence(false);
+        table.getConfig().setMinTableWidth(getActivity().getWindow().getWindowManager().getDefaultDisplay().getWidth());
         return view;
     }
+
 
     List<String> terms = new ArrayList<>();
     int currentTermIndex;
@@ -118,9 +122,12 @@ public class ProgressAnalyseFragment extends Fragment {
                 OptionsPickerView pvOptions = new OptionsPickerBuilder(getActivity(), (options1, option2, options3, v) -> {
                     //返回的分别是三个级别的选中位置
                     currentTermIndex = options1;
-                    Collections.sort(list, new StudentTotalScoreComparator(currentTermIndex));
-                    adapter.setCurrentIndex(currentTermIndex);
-                    adapter.notifyDataSetChanged();
+                    list.forEach(s -> s.onTermChanged(currentTermIndex));
+                    Collections.sort(list);
+                    table.setData(list);
+//                    table.notifyDataChanged();
+//                    adapter.setCurrentIndex(currentTermIndex);
+//                    adapter.notifyDataSetChanged();
                     System.out.println(list.get(0).getProgressList());
                 })
                         .setSubmitText("确定")
