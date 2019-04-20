@@ -1,12 +1,16 @@
 package com.example.fzuscore.Activities;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
@@ -23,6 +27,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.AnimationUtils;
 import android.view.animation.LayoutAnimationController;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -39,18 +44,39 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
+import jxl.Workbook;
+import jxl.write.Label;
+import jxl.write.WritableSheet;
+import jxl.write.WritableWorkbook;
+
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+
+    private static final int REQUEST_EXTERNAL_STORAGE = 1;
+    private static String[] PERMISSIONS_STORAGE = {
+            "android.permission.READ_EXTERNAL_STORAGE",
+            "android.permission.WRITE_EXTERNAL_STORAGE" };
 
     long lastBackTime;
     SharedPreferences spf;
 
     List<List<Subject>> termSubjectList = new ArrayList<>();
     List<TermScoreFragment> termScoreFragmentList = new ArrayList<>();
+
+    List<Subject> mSubjectList = new ArrayList<>();
+    private String excelFilePath = "";
+    private String[] colNames = new String[]{"科目","排名", "成绩","平均分"};
+    String[] pess = new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE};
+    File path;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,6 +85,7 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle("我的成绩");
+
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -78,6 +105,42 @@ public class MainActivity extends AppCompatActivity
         textUsername.setText(UserInfo.getUser_name());
         TextView textUserId = headerView.findViewById(R.id.user_account);
         textUserId.setText(UserInfo.getStudent_id_str());
+
+
+        path = Environment.getExternalStorageDirectory();
+        System.out.println(path);
+    }
+
+    private void writeExcel(String path,List<Subject> subjects) {
+        WritableWorkbook book = null;
+        System.out.println(path);
+        try{
+            book = Workbook.createWorkbook(new File(path+"/"+UserInfo.getStudent_id_str()+" "+UserInfo.getUser_name()+".xls"));
+            //生成名为eccif的工作表，参数0表示第一页
+            WritableSheet sheet = book.createSheet("eccif", 0);
+            for(int j=0;j<4;j++){
+                Label label = new Label(j, 0, colNames[j]);
+                sheet.addCell(label);
+            }
+            for(int i=0;i<subjects.size();i++){
+                sheet.addCell(new Label(0,i+1,subjects.get(i).getName()));
+                sheet.addCell(new Label(1,i+1,String.valueOf(subjects.get(i).getRank())));
+                sheet.addCell(new Label(2,i+1,String.valueOf(subjects.get(i).getMyScore())));
+                sheet.addCell(new Label(3,i+1,String.valueOf(subjects.get(i).getAvrScore())));
+            }
+            // 写入数据并关闭文件
+            book.write();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }finally{
+            if(book!=null){
+                try {
+                    book.close();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 
     private void initViewPager() {
@@ -154,6 +217,7 @@ public class MainActivity extends AppCompatActivity
                     double subject_averscore = subjectJSON.getDouble("subject_averscore");
                     int subject_amount = subjectJSON.getInt("subject_amount");
                     subjectList.add(new Subject(subject_name, subject_score, subject_averscore, subject_rank, subject_amount));
+                    mSubjectList.add(new Subject(subject_name, subject_score, subject_averscore, subject_rank, subject_amount));
                 }
                 if (isMonitor) {
                     JSONObject jsonObject = new JSONObject();
@@ -195,6 +259,22 @@ public class MainActivity extends AppCompatActivity
                         runLayoutAnimation(recyclerView);
                     }
                     viewPager.getAdapter().notifyDataSetChanged();
+                }
+                break;
+            case R.id.action_toExcel:
+                try {
+                    //检测是否有写的权限
+                    int permission = ActivityCompat.checkSelfPermission(MainActivity.this,
+                            "android.permission.WRITE_EXTERNAL_STORAGE");
+                    if (permission != PackageManager.PERMISSION_GRANTED) {
+                        // 没有写的权限，去申请写的权限，会弹出对话框
+                        ActivityCompat.requestPermissions(MainActivity.this, PERMISSIONS_STORAGE,REQUEST_EXTERNAL_STORAGE);
+                    } else {
+                        writeExcel(path.toString(),mSubjectList);
+                        Toast.makeText(MainActivity.this,"导出EXCEL成功",Toast.LENGTH_SHORT).show();
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
                 break;
         }
