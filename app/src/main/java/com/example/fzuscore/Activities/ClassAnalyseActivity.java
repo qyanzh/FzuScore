@@ -9,7 +9,7 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
-import com.example.fzuscore.DataBeans.Subject;
+import com.example.fzuscore.Fragments.ProgressAnalyseFragment;
 import com.example.fzuscore.Fragments.RadarChartFragment;
 import com.example.fzuscore.R;
 
@@ -32,13 +32,12 @@ public class ClassAnalyseActivity extends BaseActivity {
         getSupportActionBar().setTitle("班级分析");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        List<Subject> list = new ArrayList<>();
         Fragment f1 = RadarChartFragment.newInstance(1);
-//        Fragment f2 = LineChartFragment.newInstance();
+        Fragment f2 = ProgressAnalyseFragment.newInstance();
         fragmentList.add(f1);
-//        fragmentList.add(f2);
+        fragmentList.add(f2);
         tabTitleList.add("优劣学科分析");
-//        tabTitleList.add("排名趋势");
+        tabTitleList.add("进步情况");
         initViewPager();
     }
 
@@ -80,7 +79,7 @@ public class ClassAnalyseActivity extends BaseActivity {
 
 //    @Override
 //    public boolean onCreateOptionsMenu(Menu menu) {
-//        getMenuInflater().inflate(R.menu.activity_analyse, menu);
+//        getMenuInflater().inflate(R.menu.menu_change_term, menu);
 //        return true;
 //    }
 

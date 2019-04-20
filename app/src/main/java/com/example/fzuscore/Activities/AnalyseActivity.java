@@ -81,7 +81,7 @@ public class AnalyseActivity extends BaseActivity {
 
 //    @Override
 //    public boolean onCreateOptionsMenu(Menu menu) {
-//        getMenuInflater().inflate(R.menu.activity_analyse, menu);
+//        getMenuInflater().inflate(R.menu.menu_change_term, menu);
 //        return true;
 //    }
 

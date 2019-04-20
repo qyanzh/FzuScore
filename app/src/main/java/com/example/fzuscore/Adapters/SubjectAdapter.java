@@ -7,7 +7,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.fzuscore.DataBeans.Subject;
 import com.example.fzuscore.R;
@@ -51,9 +50,6 @@ public class SubjectAdapter extends RecyclerView.Adapter<SubjectAdapter.ViewHold
         }
         View view = LayoutInflater.from(mContext).inflate(R.layout.subject_item, viewGroup, false);
         final ViewHolder holder = new ViewHolder(view);
-        holder.subjectView.setOnClickListener(v->{
-            Toast.makeText(mContext, "something", Toast.LENGTH_SHORT).show();
-        });
         return holder;
     }
 
