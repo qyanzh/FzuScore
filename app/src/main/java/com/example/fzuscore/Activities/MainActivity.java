@@ -70,7 +70,6 @@ public class MainActivity extends AppCompatActivity
     List<Subject> mSubjectList = new ArrayList<>();
     private String excelFilePath = "";
     private String[] colNames = new String[]{"科目","排名", "成绩","平均分"};
-    String[] pess = new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE};
     File path;
 
     @Override
