@@ -3,7 +3,6 @@ package com.example.fzuscore.Fragments;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -26,6 +25,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import androidx.fragment.app.Fragment;
 
 public class ProgressAnalyseFragment extends Fragment {
 

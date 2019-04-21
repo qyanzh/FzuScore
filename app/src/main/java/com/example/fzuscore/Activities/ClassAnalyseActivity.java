@@ -1,20 +1,21 @@
 package com.example.fzuscore.Activities;
 
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.design.widget.TabLayout;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.view.ViewPager;
-import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
 import com.example.fzuscore.Fragments.ProgressAnalyseFragment;
 import com.example.fzuscore.Fragments.RadarChartFragment;
 import com.example.fzuscore.R;
+import com.google.android.material.tabs.TabLayout;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import androidx.annotation.Nullable;
+import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentPagerAdapter;
+import androidx.viewpager.widget.ViewPager;
 
 
 public class ClassAnalyseActivity extends BaseActivity {

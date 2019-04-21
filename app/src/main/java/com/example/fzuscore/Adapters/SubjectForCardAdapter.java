@@ -2,8 +2,6 @@ package com.example.fzuscore.Adapters;
 
 import android.content.Context;
 import android.content.Intent;
-import android.support.v7.widget.CardView;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +13,9 @@ import com.example.fzuscore.R;
 
 import java.text.DecimalFormat;
 import java.util.List;
+
+import androidx.cardview.widget.CardView;
+import androidx.recyclerview.widget.RecyclerView;
 
 public class SubjectForCardAdapter extends RecyclerView.Adapter<SubjectForCardAdapter.ViewHolder> {
     private Context mContext;

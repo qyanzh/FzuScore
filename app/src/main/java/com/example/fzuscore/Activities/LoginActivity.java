@@ -3,26 +3,23 @@ package com.example.fzuscore.Activities;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.v7.app.AppCompatActivity;
-import android.text.method.HideReturnsTransformationMethod;
-import android.text.method.PasswordTransformationMethod;
 import android.util.Log;
-import android.widget.EditText;
-import android.widget.Switch;
 import android.widget.Toast;
 
 import com.example.fzuscore.R;
 import com.example.fzuscore.Utils.Crypt;
 import com.example.fzuscore.Utils.RequestUtils;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.textfield.TextInputEditText;
 
 import org.json.JSONObject;
 
+import androidx.appcompat.app.AppCompatActivity;
+
 public class LoginActivity extends AppCompatActivity {
 
-    private EditText mAccountNumber;
-    private EditText mPassword;
-    Switch switchDisplayPassword;
+    private TextInputEditText mAccountNumber;
+    private TextInputEditText mPassword;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,14 +35,6 @@ public class LoginActivity extends AppCompatActivity {
         // Set up the login form.
         mAccountNumber = findViewById(R.id.et_account_number);
         mPassword = findViewById(R.id.et_password);
-        switchDisplayPassword = findViewById(R.id.switch_displayPassword);
-        switchDisplayPassword.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            if (isChecked) {
-                mPassword.setTransformationMethod(HideReturnsTransformationMethod.getInstance());
-            } else {
-                mPassword.setTransformationMethod(PasswordTransformationMethod.getInstance());
-            }
-        });
         FloatingActionButton fab = findViewById(R.id.fab_sign_in);
         fab.setOnClickListener(v -> sendRequestWithOkHttp());
     }

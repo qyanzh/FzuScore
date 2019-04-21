@@ -3,14 +3,6 @@ package com.example.fzuscore.Fragments;
 import android.app.Dialog;
 import android.graphics.Point;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.design.widget.BottomSheetBehavior;
-import android.support.design.widget.BottomSheetDialogFragment;
-import android.support.design.widget.TabLayout;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.view.ViewPager;
 import android.view.Display;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -18,9 +10,18 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.fzuscore.R;
+import com.google.android.material.bottomsheet.BottomSheetBehavior;
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
+import com.google.android.material.tabs.TabLayout;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentPagerAdapter;
+import androidx.viewpager.widget.ViewPager;
 
 public class BottomDialogFragment extends BottomSheetDialogFragment {
     public static BottomDialogFragment newInstance(int perfect, int good, int pass, int die,int total) {
@@ -77,7 +78,7 @@ public class BottomDialogFragment extends BottomSheetDialogFragment {
         dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT,
                 height + 100);
         dialog.getWindow().setGravity(Gravity.BOTTOM);
-        View view = dialog.getWindow().findViewById(android.support.design.R.id.design_bottom_sheet);
+        View view = dialog.getWindow().findViewById(R.id.design_bottom_sheet);
         BottomSheetBehavior.from(view).setPeekHeight(height + 100);
     }
 }
