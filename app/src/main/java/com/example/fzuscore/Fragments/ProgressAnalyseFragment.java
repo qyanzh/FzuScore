@@ -105,6 +105,9 @@ public class ProgressAnalyseFragment extends Fragment {
             list = new ArrayList<>(termRankMap.values());
             list.forEach(s -> s.onTermChanged(currentTermIndex));
             Collections.sort(list);
+            mExcelList = new ArrayList<>(termRankMap.values());
+            mExcelList.forEach(s->s.onTermChanged(currentTermIndex));
+            Collections.sort(mExcelList);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -183,25 +186,22 @@ public class ProgressAnalyseFragment extends Fragment {
         System.out.println(path);
         DecimalFormat df = new DecimalFormat("000000000");
         try{
-                book = Workbook.createWorkbook(new File(path+"/"+terms.get(currentTermIndex)+"排名进步情况.xls"));
-                WritableSheet sheet = book.createSheet("eccif", 0);
-                for(int j=0;j<6;j++){
-                    Label label = new Label(j, 0, colNames[j]);
-                    sheet.addCell(label);
-                }
-
-                for(int i=0;i<subjects.size();i++){
-                    sheet.addCell(new Label(0,i+1,df.format(subjects.get(i).getId())));
-                    sheet.addCell(new Label(1,i+1,String.valueOf(subjects.get(i).getName())));
-                    sheet.addCell(new Label(2,i+1,String.valueOf(subjects.get(i).getScoreList().get(currentTermIndex))));
-                    sheet.addCell(new Label(3,i+1,String.valueOf(subjects.get(i).getRankList().get(currentTermIndex))));
-                    sheet.addCell(new Label(4,i+1,String.valueOf(subjects.get(i).getRankList().get(currentTermIndex+1))));
-                    sheet.addCell(new Label(5,i+1,String.valueOf(subjects.get(i).getProgressList().get(currentTermIndex))));
-                }
-                // 写入数据并关闭文件
-                book.write();
-            //生成名为eccif的工作表，参数0表示第一页
-
+            book = Workbook.createWorkbook(new File(path+"/"+ terms.get(currentTermIndex)+"进步情况.xls"));
+            WritableSheet sheet = book.createSheet("eccif", 0);
+            for(int j=0;j<6;j++){
+                Label label = new Label(j, 0, colNames[j]);
+                sheet.addCell(label);
+            }
+            for(int i=0;i<subjects.size();i++){
+                sheet.addCell(new Label(0,i+1,df.format(subjects.get(i).getId())));
+                sheet.addCell(new Label(1,i+1,subjects.get(i).getName()));
+                sheet.addCell(new Label(2,i+1,String.valueOf(subjects.get(i).getScoreList().get(currentTermIndex))));
+                sheet.addCell(new Label(3,i+1,String.valueOf(subjects.get(i).getRankList().get(currentTermIndex))));
+                sheet.addCell(new Label(4,i+1,String.valueOf(subjects.get(i).getRankList().get(currentTermIndex+1))));
+                sheet.addCell(new Label(5,i+1,String.valueOf(subjects.get(i).getProgressList().get(currentTermIndex))));
+            }
+            // 写入数据并关闭文件
+            book.write();
         } catch (Exception e) {
             e.printStackTrace();
         }finally{
@@ -215,8 +215,4 @@ public class ProgressAnalyseFragment extends Fragment {
         }
     }
 
-    @Override
-    public void onPrepareOptionsMenu(Menu menu) {
-        super.onPrepareOptionsMenu(menu);
-    }
 }
