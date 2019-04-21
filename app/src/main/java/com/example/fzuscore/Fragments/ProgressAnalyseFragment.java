@@ -20,10 +20,10 @@ import android.widget.Toast;
 import com.bigkoo.pickerview.builder.OptionsPickerBuilder;
 import com.bigkoo.pickerview.view.OptionsPickerView;
 import com.example.fzuscore.Activities.ScoreRankActivity;
-import com.example.fzuscore.Adapters.ProgressRankAdapter;
+import com.bin.david.form.core.SmartTable;
 import com.example.fzuscore.DataBeans.ScoreRankStudent;
 import com.example.fzuscore.DataBeans.StudentTotalScore;
-import com.example.fzuscore.DataBeans.StudentTotalScoreComparator;
+
 import com.example.fzuscore.R;
 
 import org.json.JSONArray;
@@ -108,9 +108,8 @@ public class ProgressAnalyseFragment extends Fragment {
                 value.calculateProgress();
             }
             list = new ArrayList<>(termRankMap.values());
-            Collections.sort(list, new StudentTotalScoreComparator(currentTermIndex));
-            mExcelList = new ArrayList<>(termRankMap.values());
-            Collections.sort(mExcelList,new StudentTotalScoreComparator(currentTermIndex));
+            list.forEach(s -> s.onTermChanged(currentTermIndex));
+            Collections.sort(list);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -118,18 +117,20 @@ public class ProgressAnalyseFragment extends Fragment {
 
     List<StudentTotalScore> list;
     List<StudentTotalScore> mExcelList;
-    RecyclerView recyclerView;
-    ProgressRankAdapter adapter;
+    SmartTable<StudentTotalScore> table;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_progress_analyse, container, false);
-        recyclerView = view.findViewById(R.id.recycler_view_rank);
-        adapter = new ProgressRankAdapter(list, currentTermIndex);
-        recyclerView.setAdapter(adapter);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        table = view.findViewById(R.id.table);
+        table.setData(list);
+        table.getConfig().setShowTableTitle(false);
+        table.getConfig().setHorizontalPadding(20);
+        table.getConfig().setShowXSequence(false);
+        table.getConfig().setShowYSequence(false);
+        table.getConfig().setMinTableWidth(getActivity().getWindow().getWindowManager().getDefaultDisplay().getWidth());
         return view;
     }
 
@@ -143,9 +144,9 @@ public class ProgressAnalyseFragment extends Fragment {
                 OptionsPickerView pvOptions = new OptionsPickerBuilder(getActivity(), (options1, option2, options3, v) -> {
                     //返回的分别是三个级别的选中位置
                     currentTermIndex = options1;
-                    Collections.sort(list, new StudentTotalScoreComparator(currentTermIndex));
-                    adapter.setCurrentIndex(currentTermIndex);
-                    adapter.notifyDataSetChanged();
+                    list.forEach(s -> s.onTermChanged(currentTermIndex));
+                    Collections.sort(list);
+                    table.setData(list);
                     System.out.println(list.get(0).getProgressList());
                 })
                         .setSubmitText("确定")
@@ -157,6 +158,8 @@ public class ProgressAnalyseFragment extends Fragment {
                 pvOptions.show();
                 break;
             case R.id.action_toExcel_change:
+                System.out.println(2323);
+                Toast.makeText(getActivity(), "]]]]]", Toast.LENGTH_SHORT).show();
                 try {
                     //检测是否有写的权限
                     int permission = ActivityCompat.checkSelfPermission(getActivity(),
