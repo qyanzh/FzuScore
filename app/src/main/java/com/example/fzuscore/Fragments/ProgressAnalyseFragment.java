@@ -2,7 +2,10 @@ package com.example.fzuscore.Fragments;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.os.Environment;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -12,10 +15,13 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.bigkoo.pickerview.builder.OptionsPickerBuilder;
 import com.bigkoo.pickerview.view.OptionsPickerView;
+import com.example.fzuscore.Activities.ScoreRankActivity;
 import com.example.fzuscore.Adapters.ProgressRankAdapter;
+import com.example.fzuscore.DataBeans.ScoreRankStudent;
 import com.example.fzuscore.DataBeans.StudentTotalScore;
 import com.example.fzuscore.DataBeans.StudentTotalScoreComparator;
 import com.example.fzuscore.R;
@@ -24,14 +30,28 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import jxl.Workbook;
+import jxl.write.Label;
+import jxl.write.WritableSheet;
+import jxl.write.WritableWorkbook;
+
 public class ProgressAnalyseFragment extends Fragment {
 
+
+    private static final int REQUEST_EXTERNAL_STORAGE = 1;
+    private static String[] PERMISSIONS_STORAGE = {
+            "android.permission.READ_EXTERNAL_STORAGE",
+            "android.permission.WRITE_EXTERNAL_STORAGE" };
+    private String[] colNames = new String[]{"学号", "姓名","总成绩","本期","上期","进步"};
+    File path;
 
     public static ProgressAnalyseFragment newInstance() {
         ProgressAnalyseFragment fragment = new ProgressAnalyseFragment();
@@ -52,6 +72,8 @@ public class ProgressAnalyseFragment extends Fragment {
         }
         spf = getActivity().getSharedPreferences("info", Context.MODE_PRIVATE);
         parseJSON(spf.getString("scoreJSON", null));
+
+        path = Environment.getExternalStorageDirectory();
     }
 
 
@@ -87,12 +109,15 @@ public class ProgressAnalyseFragment extends Fragment {
             }
             list = new ArrayList<>(termRankMap.values());
             Collections.sort(list, new StudentTotalScoreComparator(currentTermIndex));
+            mExcelList = new ArrayList<>(termRankMap.values());
+            Collections.sort(mExcelList,new StudentTotalScoreComparator(currentTermIndex));
         } catch (JSONException e) {
             e.printStackTrace();
         }
     }
 
     List<StudentTotalScore> list;
+    List<StudentTotalScore> mExcelList;
     RecyclerView recyclerView;
     ProgressRankAdapter adapter;
 
@@ -131,6 +156,22 @@ public class ProgressAnalyseFragment extends Fragment {
                 pvOptions.setPicker(subTerms);
                 pvOptions.show();
                 break;
+            case R.id.action_toExcel_change:
+                try {
+                    //检测是否有写的权限
+                    int permission = ActivityCompat.checkSelfPermission(getActivity(),
+                            "android.permission.WRITE_EXTERNAL_STORAGE");
+                    if (permission != PackageManager.PERMISSION_GRANTED) {
+                        // 没有写的权限，去申请写的权限，会弹出对话框
+                        ActivityCompat.requestPermissions(getActivity(), PERMISSIONS_STORAGE,REQUEST_EXTERNAL_STORAGE);
+                    } else {
+                        writeExcel(path.toString(),mExcelList);
+                        Toast.makeText(getActivity(),"成功导出EXCEL到SD卡",Toast.LENGTH_SHORT).show();
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                break;
         }
         return true;
     }
@@ -141,4 +182,45 @@ public class ProgressAnalyseFragment extends Fragment {
         super.onCreateOptionsMenu(menu, inflater);
     }
 
+    private void writeExcel(String path,List<StudentTotalScore> subjects) {
+        WritableWorkbook book = null;
+        System.out.println(path);
+        DecimalFormat df = new DecimalFormat("000000000");
+        try{
+                book = Workbook.createWorkbook(new File(path+"/"+terms.get(currentTermIndex)+"排名进步情况.xls"));
+                WritableSheet sheet = book.createSheet("eccif", 0);
+                for(int j=0;j<6;j++){
+                    Label label = new Label(j, 0, colNames[j]);
+                    sheet.addCell(label);
+                }
+
+                for(int i=0;i<subjects.size();i++){
+                    sheet.addCell(new Label(0,i+1,df.format(subjects.get(i).getId())));
+                    sheet.addCell(new Label(1,i+1,String.valueOf(subjects.get(i).getName())));
+                    sheet.addCell(new Label(2,i+1,String.valueOf(subjects.get(i).getScoreList().get(currentTermIndex))));
+                    sheet.addCell(new Label(3,i+1,String.valueOf(subjects.get(i).getRankList().get(currentTermIndex))));
+                    sheet.addCell(new Label(4,i+1,String.valueOf(subjects.get(i).getRankList().get(currentTermIndex+1))));
+                    sheet.addCell(new Label(5,i+1,String.valueOf(subjects.get(i).getProgressList().get(currentTermIndex))));
+                }
+                // 写入数据并关闭文件
+                book.write();
+            //生成名为eccif的工作表，参数0表示第一页
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }finally{
+            if(book!=null){
+                try {
+                    book.close();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        super.onPrepareOptionsMenu(menu);
+    }
 }

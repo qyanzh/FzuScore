@@ -6,4 +6,8 @@
         app:showAsAction="ifRoom"
         >
     </item>
+    <item android:id="@+id/action_toExcel_change"
+        android:title="导出Excel"
+        app:showAsAction="ifRoom"
+        android:icon="@drawable/ic_toexcel_white"/>
 </menu>
