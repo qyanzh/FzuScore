@@ -5,18 +5,12 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Environment;
-import android.support.v4.app.ActivityCompat;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.bin.david.form.core.SmartTable;
 import com.example.fzuscore.DataBeans.ScoreRankStudent;
-import com.example.fzuscore.DataBeans.Subject;
-import com.example.fzuscore.DataBeans.UserInfo;
 import com.example.fzuscore.Fragments.BottomDialogFragment;
 import com.example.fzuscore.R;
 import com.example.fzuscore.Utils.RequestUtils;
@@ -30,6 +24,8 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 import jxl.Workbook;
 import jxl.write.Label;
 import jxl.write.WritableSheet;

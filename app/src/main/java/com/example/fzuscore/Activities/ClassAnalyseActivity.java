@@ -74,6 +74,8 @@ public class ClassAnalyseActivity extends BaseActivity {
                 break;
             case R.id.menu_analyse_change_term:
                 return false;
+            case R.id.action_toExcel_change:
+                return false;
         }
         return true;
     }

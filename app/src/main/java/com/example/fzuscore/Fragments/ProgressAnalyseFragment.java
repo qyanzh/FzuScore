@@ -5,10 +5,6 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Environment;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.Fragment;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -19,11 +15,8 @@ import android.widget.Toast;
 
 import com.bigkoo.pickerview.builder.OptionsPickerBuilder;
 import com.bigkoo.pickerview.view.OptionsPickerView;
-import com.example.fzuscore.Activities.ScoreRankActivity;
 import com.bin.david.form.core.SmartTable;
-import com.example.fzuscore.DataBeans.ScoreRankStudent;
 import com.example.fzuscore.DataBeans.StudentTotalScore;
-
 import com.example.fzuscore.R;
 
 import org.json.JSONArray;
@@ -38,6 +31,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import androidx.core.app.ActivityCompat;
+import androidx.fragment.app.Fragment;
 import jxl.Workbook;
 import jxl.write.Label;
 import jxl.write.WritableSheet;
@@ -158,8 +153,6 @@ public class ProgressAnalyseFragment extends Fragment {
                 pvOptions.show();
                 break;
             case R.id.action_toExcel_change:
-                System.out.println(2323);
-                Toast.makeText(getActivity(), "]]]]]", Toast.LENGTH_SHORT).show();
                 try {
                     //检测是否有写的权限
                     int permission = ActivityCompat.checkSelfPermission(getActivity(),
