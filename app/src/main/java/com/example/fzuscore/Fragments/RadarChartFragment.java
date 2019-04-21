@@ -196,7 +196,11 @@ public class RadarChartFragment extends Fragment {
             @Override
             public void onValueSelected(Entry e, Highlight h) {
                 DecimalFormat df = new DecimalFormat("0.00");
-                Snackbar.make(getView(), subjectNamesList.get(currentTermIndex).get((int) h.getX()) + " 击败了" + df.format(e.getY()) + "%的同学", Snackbar.LENGTH_SHORT).show();
+                if (mode == 0) {
+                    Snackbar.make(getView(), subjectNamesList.get(currentTermIndex).get((int) h.getX()) + " 击败了" + df.format(e.getY()) + "%的同学", Snackbar.LENGTH_SHORT).show();
+                } else {
+                    Snackbar.make(getView(), subjectNamesList.get(currentTermIndex).get((int) h.getX()) + " 优秀率达到" + df.format(e.getY()) + "%", Snackbar.LENGTH_SHORT).show();
+                }
             }
 
             @Override
