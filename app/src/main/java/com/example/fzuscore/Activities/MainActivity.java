@@ -1,6 +1,5 @@
 package com.example.fzuscore.Activities;
 
-import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -15,7 +14,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.AnimationUtils;
 import android.view.animation.LayoutAnimationController;
-import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -29,6 +27,7 @@ import com.example.fzuscore.Utils.RequestUtils;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.tabs.TabLayout;
+import com.google.android.material.textfield.TextInputEditText;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -325,9 +324,9 @@ public class MainActivity extends AppCompatActivity
         final View dialogView = LayoutInflater.from(MainActivity.this)
                 .inflate(R.layout.layout_change_password, null);
         builder.setView(dialogView);
-        EditText originPassword = dialogView.findViewById(R.id.editText_origin_password);
-        EditText newPassword = dialogView.findViewById(R.id.editText_new_password);
-        EditText confirmPassword = dialogView.findViewById(R.id.editText_confirm_password);
+        TextInputEditText originPassword = dialogView.findViewById(R.id.editText_origin_password);
+        TextInputEditText newPassword = dialogView.findViewById(R.id.editText_new_password);
+        TextInputEditText confirmPassword = dialogView.findViewById(R.id.editText_confirm_password);
         builder.setTitle("修改密码");
         builder.setPositiveButton("确定", null);
         builder.setNegativeButton("取消", null);
