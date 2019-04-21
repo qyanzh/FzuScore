@@ -93,6 +93,7 @@ public class ScoreRankActivity extends AppCompatActivity {
                 double score = subjectJSON.optDouble("score");
                 int rank = subjectJSON.optInt("rank");
                 studentList.add(new ScoreRankStudent(name, score, id, rank));
+                mSubjectList.add(new ScoreRankStudent(name,score,id,rank));
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -185,23 +186,37 @@ public class ScoreRankActivity extends AppCompatActivity {
         try{
             if (term==0){
                 book = Workbook.createWorkbook(new File(path+"/"+ subjectName+"排名情况.xls"));
+                WritableSheet sheet = book.createSheet("eccif", 0);
+                for(int j=0;j<4;j++){
+                    Label label = new Label(j, 0, colNames[j]);
+                    sheet.addCell(label);
+                }
+                for(int i=0;i<subjects.size();i++){
+                    sheet.addCell(new Label(0,i+1,String.valueOf(subjects.get(i).getRank())));
+                    sheet.addCell(new Label(1,i+1,df.format(subjects.get(i).getNumber())));
+                    sheet.addCell(new Label(2,i+1,String.valueOf(subjects.get(i).getName())));
+                    sheet.addCell(new Label(3,i+1,String.valueOf(subjects.get(i).getScore())));
+                }
+                // 写入数据并关闭文件
+                book.write();
             }else{
-                book = Workbook.createWorkbook(new File(path+"/"+"学期总排名情况.xls"));
+                book = Workbook.createWorkbook(new File(path+"/"+term+"学期总排名情况.xls"));
+                WritableSheet sheet = book.createSheet("eccif", 0);
+                for(int j=0;j<4;j++){
+                    Label label = new Label(j, 0, colNames[j]);
+                    sheet.addCell(label);
+                }
+                for(int i=0;i<subjects.size();i++){
+                    sheet.addCell(new Label(0,i+1,String.valueOf(subjects.get(i).getRank())));
+                    sheet.addCell(new Label(1,i+1,df.format(subjects.get(i).getNumber())));
+                    sheet.addCell(new Label(2,i+1,String.valueOf(subjects.get(i).getName())));
+                    sheet.addCell(new Label(3,i+1,String.valueOf(subjects.get(i).getScore())));
+                }
+                // 写入数据并关闭文件
+                book.write();
             }
             //生成名为eccif的工作表，参数0表示第一页
-            WritableSheet sheet = book.createSheet("eccif", 0);
-            for(int j=0;j<4;j++){
-                Label label = new Label(j, 0, colNames[j]);
-                sheet.addCell(label);
-            }
-            for(int i=0;i<subjects.size();i++){
-                sheet.addCell(new Label(0,i+1,String.valueOf(subjects.get(i).getRank())));
-                sheet.addCell(new Label(1,i+1,df.format(subjects.get(i).getNumber())));
-                sheet.addCell(new Label(2,i+1,String.valueOf(subjects.get(i).getName())));
-                sheet.addCell(new Label(3,i+1,String.valueOf(subjects.get(i).getScore())));
-            }
-            // 写入数据并关闭文件
-            book.write();
+
         } catch (Exception e) {
             e.printStackTrace();
         }finally{
