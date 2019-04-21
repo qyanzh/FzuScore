@@ -136,7 +136,7 @@ public class RadarChartFragment extends Fragment {
                 return subjectNamesList.get(currentTermIndex).get((int) value % length);
             }
         });
-        xAxis.setTextColor(Color.BLUE);
+        xAxis.setTextColor(getResources().getColor(R.color.colorPrimary));
 
         YAxis yAxis = radarChart.getYAxis();
 //        yAxis.setTypeface(Typeface.DEFAULT);
@@ -145,7 +145,7 @@ public class RadarChartFragment extends Fragment {
         //yAxis.setInverted(true);
         yAxis.setDrawLabels(false);
         yAxis.setTextColor(Color.BLUE);
-        yAxis.setAxisMinimum(-50f);
+        yAxis.setAxisMinimum(-30f);
 
         Legend l = radarChart.getLegend();
         l.setVerticalAlignment(Legend.LegendVerticalAlignment.TOP);
@@ -172,6 +172,7 @@ public class RadarChartFragment extends Fragment {
         int pink = getResources().getColor(R.color.colorAccent, null);
         set.setColor(pink);
         set.setFillColor(pink);
+        set.setFillAlpha(20);
         set.setDrawFilled(true);
         set.setFillAlpha(180);
         set.setLineWidth(2f);
@@ -203,7 +204,8 @@ public class RadarChartFragment extends Fragment {
 
             }
         });
-
+        radarChart.setWebColor(getResources().getColor(R.color.colorPrimaryDark));
+        radarChart.setWebAlpha(80);
         radarChart.invalidate();
     }
 

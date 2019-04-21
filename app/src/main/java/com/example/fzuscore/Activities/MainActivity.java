@@ -58,7 +58,7 @@ public class MainActivity extends AppCompatActivity
     private static final int REQUEST_EXTERNAL_STORAGE = 1;
     private static String[] PERMISSIONS_STORAGE = {
             "android.permission.READ_EXTERNAL_STORAGE",
-            "android.permission.WRITE_EXTERNAL_STORAGE" };
+            "android.permission.WRITE_EXTERNAL_STORAGE"};
 
     long lastBackTime;
     SharedPreferences spf;
@@ -68,7 +68,7 @@ public class MainActivity extends AppCompatActivity
 
     List<Subject> mSubjectList = new ArrayList<>();
     private String excelFilePath = "";
-    private String[] colNames = new String[]{"科目","排名", "成绩","平均分"};
+    private String[] colNames = new String[]{"科目", "排名", "成绩", "平均分"};
     File path;
 
     @Override
@@ -104,29 +104,29 @@ public class MainActivity extends AppCompatActivity
         System.out.println(path);
     }
 
-    private void writeExcel(String path,List<Subject> subjects) {
+    private void writeExcel(String path, List<Subject> subjects) {
         WritableWorkbook book = null;
         System.out.println(path);
-        try{
-            book = Workbook.createWorkbook(new File(path+"/"+UserInfo.getStudent_id_str()+" "+UserInfo.getUser_name()+".xls"));
+        try {
+            book = Workbook.createWorkbook(new File(path + "/" + UserInfo.getStudent_id_str() + " " + UserInfo.getUser_name() + ".xls"));
             //生成名为eccif的工作表，参数0表示第一页
             WritableSheet sheet = book.createSheet("eccif", 0);
-            for(int j=0;j<4;j++){
+            for (int j = 0; j < 4; j++) {
                 Label label = new Label(j, 0, colNames[j]);
                 sheet.addCell(label);
             }
-            for(int i=0;i<subjects.size();i++){
-                sheet.addCell(new Label(0,i+1,subjects.get(i).getName()));
-                sheet.addCell(new Label(1,i+1,String.valueOf(subjects.get(i).getRank())));
-                sheet.addCell(new Label(2,i+1,String.valueOf(subjects.get(i).getMyScore())));
-                sheet.addCell(new Label(3,i+1,String.valueOf(subjects.get(i).getAvrScore())));
+            for (int i = 0; i < subjects.size(); i++) {
+                sheet.addCell(new Label(0, i + 1, subjects.get(i).getName()));
+                sheet.addCell(new Label(1, i + 1, String.valueOf(subjects.get(i).getRank())));
+                sheet.addCell(new Label(2, i + 1, String.valueOf(subjects.get(i).getMyScore())));
+                sheet.addCell(new Label(3, i + 1, String.valueOf(subjects.get(i).getAvrScore())));
             }
             // 写入数据并关闭文件
             book.write();
         } catch (Exception e) {
             e.printStackTrace();
-        }finally{
-            if(book!=null){
+        } finally {
+            if (book != null) {
                 try {
                     book.close();
                 } catch (Exception e) {
@@ -155,12 +155,14 @@ public class MainActivity extends AppCompatActivity
             NavigationView navigationView = findViewById(R.id.nav_view);
             navigationView.getMenu().findItem(R.id.nav_monitor).setVisible(true);
         }
-        if (!RequestUtils.isWebConnect(this)) {
-            Snackbar.make(findViewById(android.R.id.content), "网络不可用", Snackbar.LENGTH_SHORT).show();
-        } else {
-            if (JSON.contentEquals("")) {
+        if (JSON.contentEquals("")) {
+            if (!RequestUtils.isWebConnect(this)) {
+                Snackbar.make(findViewById(android.R.id.content), "网络不可用", Snackbar.LENGTH_SHORT).show();
+            } else {
                 JSON = getJSONFromServer();
             }
+        }
+        if (!JSON.contentEquals("")) {
             parseJSON(JSON);
         }
         ViewPager viewPager = findViewById(R.id.viewpager);
@@ -261,10 +263,10 @@ public class MainActivity extends AppCompatActivity
                             "android.permission.WRITE_EXTERNAL_STORAGE");
                     if (permission != PackageManager.PERMISSION_GRANTED) {
                         // 没有写的权限，去申请写的权限，会弹出对话框
-                        ActivityCompat.requestPermissions(MainActivity.this, PERMISSIONS_STORAGE,REQUEST_EXTERNAL_STORAGE);
+                        ActivityCompat.requestPermissions(MainActivity.this, PERMISSIONS_STORAGE, REQUEST_EXTERNAL_STORAGE);
                     } else {
-                        writeExcel(path.toString(),mSubjectList);
-                        Toast.makeText(MainActivity.this,"成功导出EXCEL到SD卡",Toast.LENGTH_SHORT).show();
+                        writeExcel(path.toString(), mSubjectList);
+                        Toast.makeText(MainActivity.this, "成功导出EXCEL到SD卡", Toast.LENGTH_SHORT).show();
                     }
                 } catch (Exception e) {
                     e.printStackTrace();

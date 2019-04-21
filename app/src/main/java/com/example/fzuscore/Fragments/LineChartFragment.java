@@ -55,7 +55,7 @@ public class LineChartFragment extends Fragment {
         String responseData = spf.getString("scoreJSON", null);
         parseJSON(responseData);
 
-        for (int i = 0; i < 4; i++) {
+        for (int i = 0; i < termList.size(); i++) {
             entries.add(new Entry(i, rankList.get(i)));
         }
 
@@ -90,7 +90,7 @@ public class LineChartFragment extends Fragment {
         xAxis.setLabelCount(4);
         xAxis.setPosition(XAxis.XAxisPosition.TOP);
         xAxis.setValueFormatter(new IndexAxisValueFormatter(termList));
-        xAxis.setYOffset(-3f);
+        xAxis.setYOffset(-1f);
 
         Description description = new Description();
         description.setEnabled(false);
